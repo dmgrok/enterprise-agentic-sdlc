@@ -1,8 +1,8 @@
 manifest-version: "1"
 name: Enterprise Agentic SDLC Kit
-description: Staged intent drafting and offline lifecycle gate contract spike.
+description: Governed intent drafting with external admission, model-cost reservations and staged outputs.
 files:
-  - workflows/draft-intent.md
+  - workflows/governed-intent.md
 resources:
   - source: resources/intent-template.json
     destination: .github/aw/kit/intent-template.json

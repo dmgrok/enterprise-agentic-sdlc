@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Control Policy",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "objective_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "allowed_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowed_tools": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mandatory_checks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "operators": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "max_repair_attempts": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_runtime_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "telemetry_ttl_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_spend_microusd": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "warn_spend_microusd": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_burn_microusd_per_minute": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "github_target": {
+      "type": "object",
+      "required": [
+        "repository",
+        "run_id",
+        "attempt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "run_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "work_item_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,100}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "objective_id",
+    "revision",
+    "allowed_paths",
+    "allowed_tools",
+    "mandatory_checks",
+    "operators",
+    "max_repair_attempts",
+    "max_runtime_seconds",
+    "telemetry_ttl_seconds",
+    "max_spend_microusd",
+    "warn_spend_microusd",
+    "max_burn_microusd_per_minute"
+  ],
+  "additionalProperties": false
+}

@@ -25,5 +25,15 @@ jobs:
         run: python -m unittest discover -v
       - name: Check restricted workflow profile
         run: python -m kit.profile .
+      - name: Reproduce pinned gh-aw compilation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/kit-compiler"
+          gh release download v0.92.0 --repo github/gh-aw --pattern linux-amd64 --dir "$RUNNER_TEMP/kit-compiler"
+          chmod +x "$RUNNER_TEMP/kit-compiler/linux-amd64"
+          python scripts/compile.py --compiler "$RUNNER_TEMP/kit-compiler/linux-amd64" --check
       - name: Exercise local control demo
         run: python examples/control_demo.py
+      - name: Exercise HTTP gateway and artifact integration
+        run: python examples/http_demo.py

@@ -213,9 +213,12 @@ Attempt handoff and organisation-wide retry admission are not implemented yet.
 
 ## Remaining integration proof
 
-The runnable local controller and cancellation client do not constitute a live
-enterprise deployment. Still required: trusted runtime collectors, complete
-gateway routing, a protected output broker, operator authentication, protected
-storage and keys, alert delivery, an external watchdog deployment, enrolment
-across run attempts, and a synthetic live GitHub proof that all three axes can
-stop work and withhold writes. Keep staged mode on until those checks pass.
+The [HTTP integration](integration.md) now supplies role-scoped authentication,
+gateway reservations, digest-bound collection, controller-owned staging, and
+compiled gh-aw admission/output hooks. This does not constitute a live enterprise
+deployment. Still required: trusted platform artifact download, production
+collector and service operation, verified complete gateway routing, a protected
+GitHub writer, operator SSO, protected storage and keys, alert delivery, an
+external watchdog deployment, enrolment across run attempts, and a live GitHub
+proof that all three axes can stop work and withhold writes. Keep staged mode
+on until those checks pass.

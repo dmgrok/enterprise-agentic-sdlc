@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 import yaml
+from kit.ghaw import inspect_governed
 
 
 class Loader(yaml.SafeLoader):
@@ -86,7 +87,7 @@ def main():
     try:
         root = args.root
         manifest = yaml.load((root / "aw.yml").read_text(), Loader=Loader)
-        if manifest["files"] != ["workflows/draft-intent.md"]:
+        if manifest["files"] != ["workflows/governed-intent.md"]:
             failures.append("unsupported-package-workflows")
         if json.loads((root / ".github/workflows/aw.json").read_text()) != {"strict": True}:
             failures.append("repository-strict-mode")
@@ -94,7 +95,8 @@ def main():
         if [str(p.relative_to(root)) for p in paths] != manifest["files"]:
             failures.append("unlisted-workflows")
         for path in paths:
-            failures.extend(str(path.relative_to(root)) + ": " + x for x in inspect(read_frontmatter(path)))
+            checker = inspect_governed if path.name == "governed-intent.md" else inspect
+            failures.extend(str(path.relative_to(root)) + ": " + x for x in checker(read_frontmatter(path)))
         for resource in manifest.get("resources", []):
             if resource != {"source": "resources/intent-template.json", "destination": ".github/aw/kit/intent-template.json"}:
                 failures.append("unsupported-resource")

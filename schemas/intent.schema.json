@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Intent",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "gate": {
+      "const": "intent"
+    },
+    "work_item_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,100}$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "const": "proposed"
+    },
+    "risk_tier": {
+      "enum": [
+        "unclassified",
+        "low",
+        "standard",
+        "high"
+      ]
+    },
+    "problem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "users": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "gate",
+    "work_item_id",
+    "version",
+    "owner",
+    "decision",
+    "risk_tier",
+    "problem",
+    "users",
+    "outcome",
+    "constraints",
+    "exclusions",
+    "evidence"
+  ],
+  "additionalProperties": false
+}

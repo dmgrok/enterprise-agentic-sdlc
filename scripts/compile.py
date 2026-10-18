@@ -1,8 +1,10 @@
 """Compile in a temporary consumer repository, leaving the host vault untouched."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
+import platform
 import shutil
 import subprocess
 import tempfile
@@ -17,6 +19,11 @@ def main():
     args = parser.parse_args()
     compiler = str(Path(args.compiler).resolve())
     runtime = json.loads((ROOT / "runtime.json").read_text())
+    architecture = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64"}.get(platform.machine())
+    asset = platform.system().lower() + "-" + str(architecture)
+    expected = runtime["compiler_sha256"].get(asset)
+    if expected is None or hashlib.sha256(Path(compiler).read_bytes()).hexdigest() != expected:
+        raise SystemExit("Unrecognised compiler artifact or checksum mismatch: " + asset)
     version = subprocess.check_output([compiler, "version"], text=True).strip()
     if version != "gh aw version v" + runtime["gh_aw_version"]:
         raise SystemExit("Compiler version mismatch: " + version)
@@ -27,6 +34,8 @@ def main():
         workflows.mkdir(parents=True)
         shutil.copy2(ROOT / ".github/workflows/aw.json", workflows / "aw.json")
         for path in (ROOT / "workflows").glob("*.md"):
+            shutil.copy2(path, workflows / path.name)
+        for path in (ROOT / "workflows").glob("*.lock.yml"):
             shutil.copy2(path, workflows / path.name)
         installed = consumer / ".github/aw/kit"
         installed.mkdir(parents=True)

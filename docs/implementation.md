@@ -6,12 +6,15 @@ records. Staged outputs stay on until that proof exists.
 
 ## Next vertical slice: approved plan to bounded implementation
 
-The local three-axis runtime controller is now implemented; see
-[runtime controls](runtime-controls.md). Its process supervisor is tested against
-real child processes; the GitHub cancellation client is tested with mocked APIs.
-The packaged workflow retains staged outputs and native caps. Live telemetry,
-gateway reservations and the protected output broker still need wiring before
-claiming continuous control of gh-aw runs.
+The three-axis controller now has a role-scoped HTTP API, reservation-aware chat
+proxy, independent artifact collector and controller-owned staging broker. The
+installable gh-aw recipe calls admission before the agent, routes BYOK inference
+through that gateway and checks output evidence before safe-output handling.
+See the [integration guide](integration.md). Local HTTP fixtures and compilation
+prove those interfaces; a paid Copilot run, trusted artifact-provenance download,
+production service deployment and live cancellation still need verification.
+Safe outputs remain staged. The original unconnected recipe is a regression
+fixture and is no longer installed by the package manifest.
 
 1. Build a trusted adapter that takes repository and PR identity from the event,
    fetches all review pages, verifies human account types and excludes every
@@ -50,11 +53,12 @@ claiming continuous control of gh-aw runs.
 
 Add specification, plan, implementation, release-readiness and incident workflows
 only as their predecessors can be verified. Introduce shared hardened imports
-after merge semantics have a test. Provide a machine-readable artifact schema,
-evidence schema, trusted policy schema, settings guide and read-only settings
-audit. Support a human-readable rendering without making prose an authority
-source. Publish compatibility results for exact compiler, engine and GitHub
-plan combinations. Add attribution for any reused upstream sample code.
+after merge semantics have a test. JSON Schemas now cover intent, telemetry,
+control policy, GitHub binding and offline gate evidence. Extend them with the
+remaining lifecycle artifacts, settings guide and read-only settings audit.
+Support a human-readable rendering without making prose an authority source.
+Publish compatibility results for exact compiler, engine and GitHub plan
+combinations. Add attribution for any reused upstream sample code.
 
 The existing target acceptance tests K1-K11 have **not** passed. Local tests
 exercise portions of K2-K4, K6, K8 and K9 with synthetic inputs; they are not

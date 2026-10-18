@@ -163,7 +163,7 @@ class GateTests(unittest.TestCase):
 
 class ProfileTests(unittest.TestCase):
     def config(self):
-        return read_frontmatter(ROOT / "workflows/draft-intent.md")
+        return read_frontmatter(ROOT / "fixtures/gh-aw/draft-intent.md")
 
     def test_shipped_profile(self):
         self.assertEqual([], inspect(self.config()))

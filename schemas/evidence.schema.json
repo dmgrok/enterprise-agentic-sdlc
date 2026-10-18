@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "mode": {
+      "const": "offline-simulation"
+    },
+    "work_item_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gate": {
+      "enum": [
+        "intent",
+        "specification",
+        "plan",
+        "pull_request",
+        "release",
+        "incident"
+      ]
+    },
+    "subject_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "policy_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "risk_tier": {
+      "enum": [
+        "low",
+        "standard",
+        "high"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "evidence_ref",
+          "corrective_action"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "not_evaluated",
+              "error"
+            ]
+          },
+          "evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "corrective_action": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "approval_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "agent_run_refs": {
+      "type": "array"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "blocked",
+        "error"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "mode",
+    "work_item_id",
+    "gate",
+    "subject_revision",
+    "policy_revision",
+    "policy_digest",
+    "risk_tier",
+    "checks",
+    "approval_refs",
+    "agent_run_refs",
+    "generated_at",
+    "decision"
+  ],
+  "additionalProperties": false
+}

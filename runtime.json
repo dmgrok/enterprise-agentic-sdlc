@@ -3,5 +3,9 @@
   "actions_repository": "github/gh-aw-actions",
   "actions_commit": "458b269006dcf88e3b5496b6fbecabe4b9a0f954",
   "validated_on": "2026-10-18",
-  "release_status": "spike-only"
+  "release_status": "integration-prototype",
+  "compiler_sha256": {
+    "darwin-arm64": "221523316811d86cc43b74fc66f912dc44e15a1cc155958ddd095f57d698a2fe",
+    "linux-amd64": "4f1753b20416024b15ff2cbea3f5a8745d7473bd8c73d99b4e8a79d69bb0fe83"
+  }
 }

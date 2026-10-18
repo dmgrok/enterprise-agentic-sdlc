@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Telemetry",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,100}$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "observed_at": {
+      "type": "number",
+      "minimum": 0
+    },
+    "mission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objective_id",
+        "scope_violation",
+        "progress"
+      ],
+      "properties": {
+        "objective_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope_violation": {
+          "type": "boolean"
+        },
+        "progress": {
+          "enum": [
+            "advancing",
+            "stalled"
+          ]
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checks",
+        "repair_attempts"
+      ],
+      "properties": {
+        "checks": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "pass",
+              "fail",
+              "pending"
+            ]
+          },
+          "minProperties": 1
+        },
+        "repair_attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifact_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "spend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accounting",
+        "coverage"
+      ],
+      "properties": {
+        "accounting": {
+          "const": "reservation-ledger"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "unknown"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "run_id",
+    "revision",
+    "policy_digest",
+    "sequence",
+    "observed_at",
+    "mission",
+    "quality",
+    "spend"
+  ],
+  "additionalProperties": false
+}

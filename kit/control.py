@@ -265,7 +265,7 @@ class Controller:
                 for seq, at, kind, detail in self.db.execute(
                     "SELECT sequence,at,kind,detail FROM audit WHERE run_id=? ORDER BY sequence", (run_id,))]
 
-    def apply_output(self, run_id, revision_sha, operation):
+    def apply_output(self, run_id, revision_sha, operation, evidence=None):
         """Trusted broker callback, serialized against pause/stop. Never pass agent code."""
         def apply(data):
             self._health(data)
@@ -273,5 +273,5 @@ class Controller:
                 return {"applied": False, "reason": "output-denied"}
             # The writer must bound its I/O timeout; cancellation cannot undo completed I/O.
             operation()
-            return {"applied": True}
+            return {"applied": True, "evidence": evidence}
         return self._change(run_id, "apply-output", apply)

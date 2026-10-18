@@ -21,6 +21,7 @@ from kit.service import APIError, Application, server
 from tests.test_contract import fixture, POLICY as GATE_POLICY
 from kit.gates import evaluate
 from scripts.provision_control import provision
+from scripts.compile import normalize_setup_comments
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = b"synthetic-integration-collector-key-only"
@@ -220,6 +221,15 @@ class IntegrationTests(unittest.TestCase):
 
 
 class ContractTests(unittest.TestCase):
+    def test_compiler_display_comment_is_stable_without_hiding_action_changes(self):
+        sha = "a" * 40
+        line = "        uses: github/gh-aw-actions/setup@" + sha
+        self.assertEqual(line + " # " + sha, normalize_setup_comments(line, sha))
+        self.assertEqual(line + " # " + sha, normalize_setup_comments(line + " # " + sha, sha))
+        changed = line.replace(sha, "b" * 40)
+        self.assertEqual(changed, normalize_setup_comments(changed, sha))
+        self.assertEqual(line + " # unexpected", normalize_setup_comments(line + " # unexpected", sha))
+
     def test_schema_definitions_and_existing_reports(self):
         check_schemas()
         validate("control-policy", json.loads((ROOT / "resources/control-policy.json").read_text()))

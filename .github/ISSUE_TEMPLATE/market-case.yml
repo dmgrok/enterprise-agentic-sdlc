@@ -1,0 +1,39 @@
+name: Investigate a market connection
+description: Propose a sourced, illustrative case for Market Detective.
+title: '[Case] '
+labels: ['site:case']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a market mechanism, not a price prediction. Start from a case in `site/cases/` and give it a new ID.
+        Use 3–9 nodes, forward-only connections, short labels and primary sources from BIS, the Fed or the SEC.
+        A maintainer must review the acceptance criteria and add `agent:ready` before the bounded worker can open a PR.
+  - type: textarea
+    id: question
+    attributes:
+      label: What should this investigation help explain?
+      description: Describe the question and why the connections matter.
+    validations:
+      required: true
+  - type: textarea
+    id: market-case
+    attributes:
+      label: Case JSON
+      description: Paste one complete case object, without Markdown fences. GitHub will add the JSON fence.
+      render: json
+    validations:
+      required: true
+  - type: checkboxes
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      options:
+        - label: This is explicitly illustrative, with no live-price or predictive claims.
+          required: true
+        - label: Every connection includes an explanation, a caveat and at least one allowed primary source.
+          required: true
+        - label: The scope is one new JSON file, with no workflow, policy or executable code changes.
+          required: true
+        - label: Passing tests and dependency review is required; merge remains a maintainer decision.
+          required: true

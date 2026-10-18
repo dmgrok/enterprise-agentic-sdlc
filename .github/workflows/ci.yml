@@ -3,6 +3,7 @@ name: Test prototype
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -54,3 +55,9 @@ jobs:
       - name: Validate diagram syntax with the renderer
         working-directory: tools/diagrams
         run: npm run check:diagrams
+      - name: Verify market cases and build the Pages site
+        run: |
+          node --test site/tests/*.test.mjs
+          node scripts/build_site.mjs
+      - name: Exercise market investigation on desktop and mobile
+        run: node scripts/check_site_browser.mjs

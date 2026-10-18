@@ -1,0 +1,138 @@
+{
+  "schema_version": "1",
+  "id": "rate-surprise",
+  "title": "The rate surprise",
+  "subtitle": "One policy signal, several valuation channels.",
+  "category": "Macro",
+  "episode": "illustrative",
+  "summary": "An unexpected policy signal can change the path investors expect for rates. Trace the valuation and funding channels separately. Bond yields, company earnings and digital-asset demand have many other drivers; this map is an investigation framework, not an attribution model.",
+  "nodes": [
+    {
+      "id": "policy-surprise",
+      "label": "Unexpected rate signal",
+      "detail": "Policy expectations change",
+      "kind": "event",
+      "column": 0,
+      "row": 1
+    },
+    {
+      "id": "bond-yields",
+      "label": "Bond yields reprice",
+      "detail": "The expected path of rates",
+      "kind": "mechanism",
+      "column": 1,
+      "row": 1
+    },
+    {
+      "id": "discount-rates",
+      "label": "Discount rates",
+      "detail": "Future cash flows repriced",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 0
+    },
+    {
+      "id": "funding-cost",
+      "label": "Funding conditions",
+      "detail": "Borrowing and risk capacity",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 2
+    },
+    {
+      "id": "equity-values",
+      "label": "Equity valuations",
+      "detail": "A channel, not a prediction",
+      "kind": "asset",
+      "column": 3,
+      "row": 0
+    },
+    {
+      "id": "digital-demand",
+      "label": "Digital-asset demand",
+      "detail": "A conditional risk channel",
+      "kind": "asset",
+      "column": 3,
+      "row": 2
+    }
+  ],
+  "edges": [
+    {
+      "id": "expectations",
+      "from": "policy-surprise",
+      "to": "bond-yields",
+      "label": "Expectations move first",
+      "explanation": "Monetary policy communication can influence expectations for short-term rates and, through them, longer-term yields.",
+      "caveat": "An anticipated announcement may already be priced in. Inflation expectations and term premia can move independently.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "fed-policy"
+      ]
+    },
+    {
+      "id": "discount-channel",
+      "from": "bond-yields",
+      "to": "discount-rates",
+      "label": "A different discount rate",
+      "explanation": "Changes in the discount rate investors apply can alter the present value of expected corporate earnings.",
+      "caveat": "A Treasury yield is not the full equity discount rate. Risk premia and earnings expectations also matter.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "fed-valuations"
+      ]
+    },
+    {
+      "id": "funding-channel",
+      "from": "bond-yields",
+      "to": "funding-cost",
+      "label": "The cost of funding changes",
+      "explanation": "Policy affects financial conditions, including borrowing costs and the availability of credit.",
+      "caveat": "A particular borrower's funding depends on its credit quality, maturity and lenders, not only the policy rate.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "fed-policy"
+      ]
+    },
+    {
+      "id": "equity-channel",
+      "from": "discount-rates",
+      "to": "equity-values",
+      "label": "Future earnings, valued today",
+      "explanation": "Holding expected earnings constant, a higher required discount rate lowers their present value.",
+      "caveat": "Earnings and risk premia rarely stay constant. Good growth news can offset a higher rate.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "fed-valuations"
+      ]
+    },
+    {
+      "id": "risk-capacity",
+      "from": "funding-cost",
+      "to": "digital-demand",
+      "label": "A risk-capacity hypothesis",
+      "explanation": "Tighter funding could constrain leveraged risk taking in connected digital-asset markets. Treat this as a hypothesis to investigate.",
+      "caveat": "This source supports leverage and liquidity channels, not a stable rate-to-Bitcoin relationship. Flows, regulation and crypto-specific events may dominate.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-defi"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "fed-policy",
+      "title": "Federal Reserve: how monetary policy works",
+      "url": "https://www.federalreserve.gov/monetarypolicy/monetary-policy-what-are-its-goals-how-does-it-work.htm"
+    },
+    {
+      "id": "fed-valuations",
+      "title": "Federal Reserve: profit growth, discount rates and stock returns",
+      "url": "https://www.federalreserve.gov/econres/notes/feds-notes/the-coming-long-run-slowdown-in-corporate-profit-growth-and-stock-returns-20220906.html"
+    },
+    {
+      "id": "bis-defi",
+      "title": "BIS: DeFi risks and the decentralisation illusion",
+      "url": "https://www.bis.org/publications/defi-risks-and-decentralisation-illusion"
+    }
+  ]
+}

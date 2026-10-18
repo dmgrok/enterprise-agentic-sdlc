@@ -64,6 +64,11 @@ class Application:
             raise Denied("Provider must use HTTPS; loopback HTTP needs explicit fixture mode")
         if not isinstance(gateway.get("model"), str) or not gateway["model"]:
             raise Denied("A fixed gateway model is required")
+        if gateway.get("provider") == "github-copilot":
+            if gateway["upstream"] != "https://api.githubcopilot.com/chat/completions":
+                raise Denied("GitHub Copilot requires the fixed GitHub-hosted endpoint")
+            if provider_key and not provider_key.startswith("github_pat_"):
+                raise Denied("GitHub Copilot automation requires a fine-grained PAT")
 
     def connection(self):
         return Controller(self.database, self.telemetry_key)
@@ -80,8 +85,12 @@ class Application:
     def _provider(self, payload):
         if not self.provider_key:
             raise APIError(503, "provider-credential-unavailable")
-        request = Request(self.gateway["upstream"], data=canonical(payload), method="POST", headers={
-            "Authorization": "Bearer " + self.provider_key, "Content-Type": "application/json"})
+        headers = {"Authorization": "Bearer " + self.provider_key, "Content-Type": "application/json"}
+        if self.gateway.get("provider") == "github-copilot":
+            headers.update({"Copilot-Integration-Id": "agentic-workflows",
+                            "User-Agent": "enterprise-agentic-sdlc-pilot",
+                            "X-GitHub-Api-Version": "2026-07-01"})
+        request = Request(self.gateway["upstream"], data=canonical(payload), method="POST", headers=headers)
         # Fixed endpoint only. Redirects must not forward provider credentials.
         from urllib.request import HTTPRedirectHandler, build_opener
         class NoRedirect(HTTPRedirectHandler):
@@ -92,7 +101,12 @@ class Application:
                 data = response.read(MAX_BODY + 1)
                 if len(data) > MAX_BODY:
                     raise APIError(502, "provider-response-too-large")
-                return json.loads(data)
+                result = json.loads(data)
+                if self.gateway.get("provider") == "github-copilot":
+                    # Copilot omits choice.index on non-streamed completions.
+                    for index, choice in enumerate(result.get("choices", [])):
+                        choice.setdefault("index", index)
+                return result
         except (HTTPError, URLError, TimeoutError, ValueError):
             raise APIError(502, "provider-result-unavailable") from None
 
@@ -147,6 +161,12 @@ class Application:
                 raise APIError(502, "provider-usage-invalid")
             actual = (price(incoming, self.gateway["input_microusd_per_million"])
                       + price(outgoing, self.gateway["output_microusd_per_million"]))
+            if self.gateway.get("provider") == "github-copilot":
+                nano_credits = result.get("copilot_usage", {}).get("total_nano_aiu")
+                if not integer(nano_credits):
+                    raise APIError(502, "copilot-billing-evidence-required")
+                # 1 AI credit = $0.01; one micro-USD = 100,000 nano-credits.
+                actual = (nano_credits + 99999) // 100000
             state = control.settle(run_id, call_id, actual)
             if incoming > self.gateway["context_tokens"] or outgoing > output:
                 self.pause(control, run_id, "provider-token-bound-exceeded")
@@ -205,6 +225,10 @@ class Application:
                 self.binding(control, run_id, payload)
                 if operation == "output-check":
                     state = control.status(run_id)
+                    checks = state["axes"].get("quality", {}).get("checks", {})
+                    if not all(checks.get(name) == "pass"
+                               for name in state["policy"].get("output_mandatory_checks", [])):
+                        raise APIError(409, "output-quality-checks-required")
                     artifact_digest = state["axes"].get("quality", {}).get("artifact_digest", "")
                     if not re.fullmatch(r"[0-9a-f]{64}", artifact_digest):
                         raise APIError(409, "independent-artifact-evidence-required")
@@ -215,6 +239,10 @@ class Application:
                 self.binding(control, run_id, payload["binding"])
                 validate("intent", payload["artifact"])
                 state = control.status(run_id)
+                checks = state["axes"].get("quality", {}).get("checks", {})
+                if not all(checks.get(name) == "pass"
+                           for name in state["policy"].get("output_mandatory_checks", [])):
+                    raise APIError(409, "output-quality-checks-required")
                 destination = payload["path"]
                 expected = "work/" + payload["artifact"]["work_item_id"] + "/intent.json"
                 if (payload["artifact"]["work_item_id"] != state["policy"]["work_item_id"]

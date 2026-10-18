@@ -5,6 +5,11 @@ API, and Copilot BYOK to a reservation-aware model gateway. Use the loopback
 fixture to verify the protocol first. No paid provider or live GitHub cancellation
 has been exercised by the integration tests.
 
+The repository also installs its compiled workflow in `.github/workflows/` for a temporary local pilot.
+See [configuration](configuration.md) for the operator-owned YAML, native Copilot gateway, bounded tunnel ingress,
+independent observer and human start approval. A separate bounded live Copilot gateway probe has verified inference
+and settlement; that is distinct from the synthetic integration suite and a complete GitHub workflow run.
+
 ## Prove the HTTP flow locally
 
 ```sh
@@ -192,11 +197,9 @@ semantic correctness. Its cost-coverage assertion is valid only where the
 deployment routes all inference through the gateway. Add tests, security checks
 and a qualified human/task-specific evaluator as required by the approved work.
 
-The final safe-output hook requires healthy state and an independently observed
-artifact digest. The external collector must finish before that hook executes;
-a late collector causes a safe failure rather than a guessed pass. There is no
-automatic retry of a rejected output check. Scheduling/backpressure for this
-handoff is a deployment concern to test explicitly.
+The final safe-output hook requires healthy state, the configured output checks and an independently observed
+artifact digest. It waits at most 60 seconds for that evidence while the controller remains running, then makes
+one decision request. A late collector fails safely. It never retries a denied decision or resumes a paused run.
 
 For controller-owned staging, send the binding, logical artifact path and actual
 artifact to `POST /runs/WORK-1/stage` using the writer token. The broker recomputes

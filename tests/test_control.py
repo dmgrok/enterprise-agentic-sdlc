@@ -308,6 +308,36 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(3, result["exit_code"])
         self.assertFalse(self.controller.permit_output("run-1")["allowed"])
 
+    def test_supervisor_rejects_controller_secrets_in_child_environment(self):
+        self.start()
+        with self.assertRaises(Denied):
+            supervise(self.controller, 'run-1', [sys.executable, '-c', 'pass'], self.temp.name,
+                      environment={'KIT_UPSTREAM_API_KEY': 'synthetic-key'})
+
+    def test_writer_rechecks_output_quality_and_digest_inside_transaction(self):
+        policy = copy.deepcopy(self.policy)
+        policy['output_mandatory_checks'] = ['security']
+        self.controller.create('writer-run', policy)
+        observed = event(policy, self.now, run_id='writer-run')
+        observed['quality']['artifact_digest'] = 'a' * 64
+        self.controller.observe('writer-run', signed(observed, KEY))
+        self.controller.command('writer-run', 'resume', 'operator', 'Verify writer policy')
+        writes = []
+        result = self.controller.apply_output('writer-run', policy['revision'], lambda: writes.append('bad'),
+                                               {'artifact_digest': 'a' * 64})[1]
+        self.assertEqual('output-quality-checks-required', result['reason'])
+        observed['sequence'] = 1
+        observed['quality']['checks']['security'] = 'pass'
+        observed['quality']['artifact_digest'] = 'b' * 64
+        self.controller.observe('writer-run', signed(observed, KEY))
+        result = self.controller.apply_output('writer-run', policy['revision'], lambda: writes.append('stale'),
+                                               {'artifact_digest': 'a' * 64})[1]
+        self.assertEqual('artifact-evidence-digest-mismatch', result['reason'])
+        result = self.controller.apply_output('writer-run', policy['revision'], lambda: writes.append('accepted'),
+                                               {'artifact_digest': 'b' * 64})[1]
+        self.assertTrue(result['applied'])
+        self.assertEqual(['accepted'], writes)
+
 
 class ControllerContext:
     def __init__(self, database, clock):

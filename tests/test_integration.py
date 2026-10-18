@@ -9,6 +9,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch, MagicMock
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -107,6 +108,44 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(9, state["spent_microusd"])
         self.assertTrue(all(r["state"] == "settled" for r in state["reservations"].values()))
         self.assertFalse(self.calls[0]["stream"])
+
+    def test_native_copilot_requires_billing_evidence_and_settles_credits(self):
+        self.app.gateway['provider'] = 'github-copilot'
+        self.response['copilot_usage'] = {'total_nano_aiu': 4000000}
+        self.start()
+        self.call('agent', '/v1/chat/completions', self.request())
+        state = self.call('operator', '/runs/run-1', method='GET')
+        self.assertEqual(40, state['spent_microusd'])
+        del self.response['copilot_usage']
+        with self.assertRaises(APIError):
+            self.call('agent', '/v1/chat/completions', self.request())
+        state = self.call('operator', '/runs/run-1', method='GET')
+        self.assertEqual('paused', state['state'])
+        self.assertTrue(any(r['state'] == 'reserved' for r in state['reservations'].values()))
+
+    def test_native_adapter_adds_missing_choice_index_and_integration_header(self):
+        self.app.gateway.update(provider='github-copilot', upstream='https://api.githubcopilot.com/chat/completions')
+        self.app.provider_key = 'github_pat_synthetic_fixture'
+        response = copy.deepcopy(self.response)
+        del response['choices'][0]['index']
+        transport = MagicMock()
+        transport.open.return_value.__enter__.return_value.read.return_value = json.dumps(response).encode()
+        with patch('urllib.request.build_opener', return_value=transport):
+            result = self.app._provider(self.request())
+        self.assertEqual(0, result['choices'][0]['index'])
+        request = transport.open.call_args.args[0]
+        self.assertEqual('agentic-workflows', request.get_header('Copilot-integration-id'))
+
+    def test_output_checks_cannot_be_replaced_by_digest_alone(self):
+        self.policy['output_mandatory_checks'] = ['security']
+        # A separate run is needed because enrolled policy snapshots are immutable.
+        self.app.database = Path(self.temp.name) / 'output-controls.sqlite'
+        self.call('operator', '/runs/run-1', {'policy': self.policy})
+        self.start()
+        self.telemetry(lambda event: event['quality'].update(artifact_digest='a' * 64))
+        with self.assertRaises(APIError) as denied:
+            self.call('agent', '/runs/run-1/output-check', self.binding)
+        self.assertEqual('output-quality-checks-required', denied.exception.reason)
 
     def test_streaming_client_receives_buffered_settled_sse(self):
         self.start()

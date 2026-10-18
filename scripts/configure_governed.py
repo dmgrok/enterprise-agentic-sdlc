@@ -8,6 +8,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from kit.ghaw import governed_config
+from kit.settings import load
 
 BODY = '''
 Draft one proposed intent artifact from the brief in the workflow event JSON.
@@ -25,12 +26,16 @@ The external controller and independent collectors decide whether work proceeds.
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--controller-url", default="https://controller.example.invalid")
-    parser.add_argument("--model", default="gpt-4.1")
+    parser.add_argument("--policy", type=Path, default=ROOT / ".kit/agent-policy.yml")
+    parser.add_argument("--controller-url")
+    parser.add_argument("--model")
     args = parser.parse_args()
-    config = governed_config(args.controller_url, args.model)
+    settings = load(args.policy)
+    config = governed_config(args.controller_url or settings["workflow"]["controller_url"],
+                             args.model or settings["workflow"]["model"])
     target = ROOT / "workflows/governed-intent.md"
-    target.write_text("---\n" + yaml.safe_dump(config, sort_keys=False, width=120) + "---\n" + BODY)
+    target.write_text("---\n" + yaml.safe_dump(config, sort_keys=False, width=120)
+                      + "---\n" + BODY + "\n## Approved operator guidelines\n\n" + settings["guidelines"])
     print("Rendered", target.name, "; compile with the pinned compiler before use")
 
 

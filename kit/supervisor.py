@@ -37,11 +37,18 @@ def terminate_group(process, grace_seconds=1):
     return process.wait(timeout=5)
 
 
-def supervise(controller, run_id, command, cwd, poll_seconds=0.1, grace_seconds=1):
+def supervise(controller, run_id, command, cwd, poll_seconds=0.1, grace_seconds=1, environment=None):
     if not command or controller.status(run_id)["state"] != "running":
         raise Denied("Resume a healthy run before starting an attempt")
     # Do not inherit controller credentials. Same-UID filesystem isolation is not provided here.
     child_env = {name: os.environ[name] for name in ("PATH", "LANG", "LC_ALL", "TMPDIR") if name in os.environ}
+    permitted = {"COPILOT_HOME", "COPILOT_OFFLINE", "COPILOT_MODEL", "COPILOT_PROVIDER_TYPE",
+                 "COPILOT_PROVIDER_BASE_URL", "COPILOT_PROVIDER_API_KEY",
+                 "COPILOT_PROVIDER_MAX_OUTPUT_TOKENS", "COPILOT_PROVIDER_MAX_PROMPT_TOKENS"}
+    if environment:
+        if set(environment) - permitted or any(not isinstance(v, str) for v in environment.values()):
+            raise Denied("Unsupported child environment; controller credentials must stay private")
+        child_env.update(environment)
     process = subprocess.Popen(command, cwd=cwd, env=child_env, start_new_session=True)
     stopped = False
     try:

@@ -1,0 +1,4 @@
+# Evaluated from the PR's base commit by dependency-review.yml.
+# Low/moderate findings may proceed. New high/critical findings fail the check.
+fail-on-severity: high
+warn-only: false

@@ -1,0 +1,26 @@
+{
+  "mode": "live-local-copilot-cli-pilot",
+  "model": "claude-haiku-4.5",
+  "exit_code": 0,
+  "independent_checks": {
+    "scope": "pass",
+    "artifact-schema": "pass",
+    "workflow-profile": "pass"
+  },
+  "artifact_digest": "12bbb8397a79a42fbabfb86f82b4123c17192de291059f28a00bc6633553f5dc",
+  "staged": true,
+  "spent_microusd": 12645,
+  "model_calls": 2,
+  "prior_spend_microusd": 20390,
+  "total_spent_microusd": 33035,
+  "repair_attempts": 1,
+  "stop_denied_next_call": true,
+  "github_dispatches": 0,
+  "github_writes": 0,
+  "public_tunnel": false,
+  "human_acceptance": "pending",
+  "collector_errors": [],
+  "date": "2026-10-18",
+  "cli_version": "1.0.60 (bundled, automatic updates disabled)",
+  "scope": "Local Copilot CLI with controller and independent collector; not a gh-aw GitHub Actions execution"
+}

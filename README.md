@@ -8,8 +8,37 @@ that can deny the next model call, withhold an output, pause a run, or request c
 
 **Integration prototype.** The governed recipe compiles against `gh-aw v0.92.0`. Its admission hooks,
 reservation-aware model gateway, independent artifact collector and staging broker have executable fixture tests.
-A paid model run and an end-to-end deployment on GitHub have **not** been verified. The installable recipe keeps safe outputs
+A live local Copilot CLI pilot has verified native inference, billing settlement, independent artifact checks,
+staging and denial after stop. See the [recorded result](docs/local-pilot-proof.json) and
+[proposed artifact](examples/proposed-intent.json). A complete gh-aw agent run on GitHub remains a validation step.
+The installable recipe keeps safe outputs
 staged. This is not a production release or a compliance certification.
+
+## Configure your agents and acceptance rules
+
+| What you want to change | Edit here | Enforcement |
+| --- | --- | --- |
+| Mission scope, required checks, repair/time/spend limits | [.kit/agent-policy.yml](.kit/agent-policy.yml) | Frozen into each enrolled controller run |
+| Written agent guidelines and selected model | [.kit/agent-policy.yml](.kit/agent-policy.yml) | Rendered into the gh-aw source, then compiled |
+| Dependency vulnerability threshold | [.github/dependency-review-config.yml](.github/dependency-review-config.yml) | Dependency policy PR check |
+| Trigger, allowed tools, native limits and staged outputs | [governed-intent.md](.github/workflows/governed-intent.md) | Compiled Actions workflow and restricted profile |
+
+The dependency rule is `fail-on-severity: high`: new high/critical vulnerabilities block the check;
+low/moderate findings may proceed. Missing or failed scans do not become a pass. Make **Dependency policy**
+a required status check to block merging. The workflow reads its configuration from the PR's base commit,
+so a PR cannot lower its own threshold. This check covers dependency changes introduced by the PR;
+existing vulnerabilities and other security findings need separate checks.
+
+Change policy through reviewed configuration changes. The agent cannot grant itself an exception or resume itself.
+See [configuration and the local pilot](docs/configuration.md) for commands, approval, operation and limitations.
+
+## Run the installed workflow
+
+The compiled **Governed Intent** workflow is installed in [Actions](https://github.com/dmgrok/enterprise-agentic-sdlc/actions/workflows/governed-intent.lock.yml).
+It is manual-only and requires approval in `kit-agent-start`. The current pilot runs locally;
+the cloud workflow deliberately retains an unusable controller origin and has no agent secret.
+GitHub-hosted execution needs a private controller connection or an explicitly approved hosted deployment.
+The provider credential stays in the local gateway. Safe outputs remain staged for human acceptance.
 
 ## The three operating axes
 

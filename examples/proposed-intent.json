@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1",
+  "gate": "intent",
+  "work_item_id": "intent-LOCAL-PILOT",
+  "version": 1,
+  "owner": "unassigned",
+  "decision": "proposed",
+  "risk_tier": "unclassified",
+  "problem": "Enterprise agent SDLC kit requires documented configurable acceptance rules for dependency vulnerability management. Currently undefined: high/critical vulnerability blocking criteria and low/moderate vulnerability acceptance thresholds for PR merging.",
+  "users": [
+    "enterprise SDLC stakeholders",
+    "PR reviewers",
+    "dependency management teams"
+  ],
+  "outcome": "Documented acceptance rules that specify: high/critical dependency vulnerabilities block PR merging; low/moderate vulnerabilities may proceed with documented risk acceptance.",
+  "constraints": [
+    "Rules must be configurable per project or global defaults",
+    "Blocking rules for high/critical vulnerabilities are non-negotiable",
+    "Low/moderate vulnerability acceptance must include audit trail",
+    "Rules must integrate with existing CI/CD pipeline"
+  ],
+  "exclusions": [
+    "Does not include deployment or approval of these rules",
+    "Does not establish organizational policy or override existing approvals",
+    "Does not modify workflow or deployment settings beyond documentation",
+    "Does not require security team sign-off at proposal stage"
+  ],
+  "evidence": [
+    "Missing: Formal security requirements specification for vulnerability thresholds",
+    "Missing: Integration points and dependencies for CI/CD systems",
+    "Missing: Owner and approval chain for implementation decision",
+    "Missing: Risk assessment for low/moderate vulnerability acceptance policy"
+  ]
+}

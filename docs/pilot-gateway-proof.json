@@ -1,0 +1,18 @@
+{
+  "mode": "live-copilot-gateway-probe",
+  "status": 200,
+  "model": "claude-haiku-4.5",
+  "reply": "READY",
+  "usage": {
+    "completion_tokens": 5,
+    "prompt_tokens": 15,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 20
+  },
+  "spent_microusd": 40,
+  "all_reservations_settled": true,
+  "date": "2026-10-18",
+  "scope": "Native Copilot gateway connectivity and ledger settlement only; not a complete gh-aw workflow run"
+}

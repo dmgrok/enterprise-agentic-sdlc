@@ -25,6 +25,10 @@ jobs:
         run: python -m unittest discover -v
       - name: Check restricted workflow profile
         run: python -m kit.profile .
+      - name: Check installed workflow and YAML configuration
+        run: |
+          python scripts/install_workflow.py --check
+          python -c 'from kit.settings import load; load(".kit/agent-policy.yml")'
       - name: Reproduce pinned gh-aw compilation
         env:
           GH_TOKEN: ${{ github.token }}

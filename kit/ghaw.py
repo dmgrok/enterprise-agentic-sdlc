@@ -3,7 +3,7 @@
 from urllib.parse import urlsplit
 
 
-HOOK = '''import json, os, sys
+HOOK = '''import json, os, sys, time
 from urllib.request import Request, HTTPRedirectHandler, build_opener
 from urllib.error import HTTPError, URLError
 body = {"repository": os.environ["KIT_REPOSITORY"],
@@ -20,6 +20,20 @@ try:
     class NoRedirect(HTTPRedirectHandler):
         def redirect_request(self, *args, **kwargs):
             return None
+    if os.environ["KIT_PHASE"] == "output-check":
+        # Wait for independently downloaded evidence, never retry a denied decision.
+        status_request = Request(os.environ["KIT_URL"] + "/runs/" + run,
+                                 headers={"Authorization": "Bearer " + os.environ["KIT_TOKEN"]})
+        for attempt in range(30):
+            with build_opener(NoRedirect).open(status_request, timeout=10) as response:
+                state = json.load(response)
+            if state.get("state") != "running":
+                sys.exit("Controller is not running")
+            if state.get("axes", {}).get("quality", {}).get("artifact_digest"):
+                break
+            time.sleep(2)
+        else:
+            sys.exit("Independent artifact evidence did not arrive")
     with build_opener(NoRedirect).open(request, timeout=10) as response:
         result = json.load(response)
     if result.get("allowed") is not True or result.get("revision") != body["revision"]:

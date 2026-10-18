@@ -271,6 +271,13 @@ class Controller:
             self._health(data)
             if not data["outputs_allowed"] or revision_sha != data["policy"]["revision"]:
                 return {"applied": False, "reason": "output-denied"}
+            quality = data["axes"].get("quality", {})
+            if not all(quality.get("checks", {}).get(name) == "pass"
+                       for name in data["policy"].get("output_mandatory_checks", [])):
+                return {"applied": False, "reason": "output-quality-checks-required"}
+            if (evidence and evidence.get("artifact_digest")
+                    and evidence["artifact_digest"] != quality.get("artifact_digest")):
+                return {"applied": False, "reason": "artifact-evidence-digest-mismatch"}
             # The writer must bound its I/O timeout; cancellation cannot undo completed I/O.
             operation()
             return {"applied": True, "evidence": evidence}

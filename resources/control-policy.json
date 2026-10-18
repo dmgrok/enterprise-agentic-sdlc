@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "objective_id": "draft-intent",
+  "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "allowed_paths": ["work/**"],
+  "allowed_tools": ["read", "draft"],
+  "mandatory_checks": ["scope", "artifact-schema"],
+  "operators": ["operator"],
+  "max_repair_attempts": 2,
+  "max_runtime_seconds": 600,
+  "telemetry_ttl_seconds": 15,
+  "max_spend_microusd": 2000000,
+  "warn_spend_microusd": 1500000,
+  "max_burn_microusd_per_minute": 1000000
+}

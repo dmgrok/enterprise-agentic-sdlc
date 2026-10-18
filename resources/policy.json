@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "risk_tiers": {
+    "low": {"minimum_reviewers": 1},
+    "standard": {"minimum_reviewers": 1},
+    "high": {"minimum_reviewers": 2}
+  },
+  "roles": {
+    "product": ["product-owner"],
+    "technical": ["tech-owner"],
+    "engineer": ["engineer"],
+    "codeowner": ["tech-owner", "security-owner"],
+    "release": ["release-owner"],
+    "incident": ["incident-owner"]
+  },
+  "automation_identities": ["delivery-machine-user"],
+  "gh_aw_version": "0.92.0",
+  "advisory_floor": "0.92.0"
+}

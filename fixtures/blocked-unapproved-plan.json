@@ -1,0 +1,83 @@
+{
+  "subject": {
+    "work_item_id": "DEMO-1",
+    "gate": "pull_request",
+    "version": 1,
+    "owner": "engineer",
+    "decision": "proposed",
+    "evidence": [
+      "https://github.com/example/fixture/issues/1"
+    ],
+    "risk_tier": "standard",
+    "predecessor_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "plan_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "changed_paths": [
+      "src/example.py"
+    ],
+    "tests": [
+      "Synthetic example"
+    ],
+    "residual_risks": [
+      "Synthetic example"
+    ]
+  },
+  "evidence": {
+    "source": "synthetic-fixture",
+    "api_status": "ok",
+    "classified_risk": "standard",
+    "subject_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "policy_revision": "cccccccccccccccccccccccccccccccccccccccc",
+    "policy_digest": "0fcec4829b7349e97f9250483fd26a5d1b8673184f9253e301efdd821d24dc3b",
+    "author": "author",
+    "invoking_actor": "author",
+    "predecessor": {
+      "gate": "plan",
+      "work_item_id": "DEMO-1",
+      "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "decision": "blocked",
+      "merged_to_default": false,
+      "artifact": {
+        "allowed_paths": [
+          "src/**"
+        ],
+        "summary": "Synthetic merged predecessor"
+      },
+      "content_digest": "68ff04a9d04f28afeaa50462df09cd7e84f36720f60f696ca0ad4427edd224ea"
+    },
+    "reviews": [
+      {
+        "actor": "tech-owner",
+        "actor_type": "User",
+        "state": "APPROVED",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "id": 1,
+        "url": "https://github.com/example/fixture/pull/1#pullrequestreview-1"
+      }
+    ],
+    "tests": {
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "python -m unittest",
+      "exit_status": 0,
+      "artifact_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "threat_detection": "pass",
+    "environment_approvals": {
+      "before_agent": {
+        "approved": true,
+        "actor": "tech-owner",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "before_write": {
+        "approved": true,
+        "actor": "tech-owner",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    "release_environment": {
+      "name": "demo-release",
+      "approved": true,
+      "actor": "tech-owner",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  }
+}

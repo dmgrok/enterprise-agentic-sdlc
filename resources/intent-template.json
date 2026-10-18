@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "gate": "intent",
+  "work_item_id": "REPLACE_WITH_WORK_ID",
+  "version": 1,
+  "owner": "REPLACE_WITH_HUMAN_OWNER",
+  "decision": "proposed",
+  "risk_tier": "unclassified",
+  "problem": "REPLACE",
+  "users": ["REPLACE"],
+  "outcome": "REPLACE",
+  "constraints": ["REPLACE"],
+  "exclusions": ["REPLACE"],
+  "evidence": ["REPLACE_WITH_SOURCE_REFERENCE"]
+}

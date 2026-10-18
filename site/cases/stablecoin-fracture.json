@@ -1,0 +1,145 @@
+{
+  "schema_version": "1",
+  "id": "stablecoin-fracture",
+  "title": "When a stablecoin slips",
+  "subtitle": "How a broken peg can travel beyond one token.",
+  "category": "Digital assets",
+  "episode": "illustrative",
+  "summary": "A stable price is a promise about redemption and reserves. Investigate two possible channels: holders seeking redemption, and leveraged positions using the token as collateral. Whether stress spreads depends on reserve quality, market depth and exposure. The episode is simulated; the underlying mechanisms have published sources.",
+  "nodes": [
+    {
+      "id": "broken-peg",
+      "label": "Stablecoin loses peg",
+      "detail": "The starting event",
+      "kind": "event",
+      "column": 0,
+      "row": 1
+    },
+    {
+      "id": "redemptions",
+      "label": "Redemption pressure",
+      "detail": "Holders seek the exit",
+      "kind": "mechanism",
+      "column": 1,
+      "row": 0
+    },
+    {
+      "id": "collateral",
+      "label": "Collateral repricing",
+      "detail": "A weaker borrowing base",
+      "kind": "mechanism",
+      "column": 1,
+      "row": 2
+    },
+    {
+      "id": "reserve-sales",
+      "label": "Reserve asset sales",
+      "detail": "Liquidity has to come from somewhere",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 0
+    },
+    {
+      "id": "liquidations",
+      "label": "Leveraged liquidations",
+      "detail": "Margins become binding",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 2
+    },
+    {
+      "id": "market-liquidity",
+      "label": "Market liquidity",
+      "detail": "Potential cross-asset spillover",
+      "kind": "asset",
+      "column": 3,
+      "row": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "run-pressure",
+      "from": "broken-peg",
+      "to": "redemptions",
+      "label": "The rush to redeem",
+      "explanation": "A loss of confidence can encourage holders to seek redemption, putting pressure on an issuer's immediately available liquidity.",
+      "caveat": "Redemption rights, access and the issuer's reserve structure differ. A price deviation alone does not prove a run.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "bis-stablecoins"
+      ]
+    },
+    {
+      "id": "collateral-mark",
+      "from": "broken-peg",
+      "to": "collateral",
+      "label": "The collateral is worth less",
+      "explanation": "If a lending position uses the affected token as collateral, a lower market price can reduce its collateral value.",
+      "caveat": "This link requires actual exposure and an oracle that reflects the price change. It does not apply to every protocol.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-defi"
+      ]
+    },
+    {
+      "id": "liquid-reserves",
+      "from": "redemptions",
+      "to": "reserve-sales",
+      "label": "Reserves meet redemption demand",
+      "explanation": "An issuer may need to turn reserve assets into cash to meet redemptions if its immediately available liquidity is insufficient.",
+      "caveat": "Cash buffers, short maturities or outside liquidity can absorb the demand without forced sales.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "bis-stablecoins"
+      ]
+    },
+    {
+      "id": "margin-pressure",
+      "from": "collateral",
+      "to": "liquidations",
+      "label": "A margin threshold is crossed",
+      "explanation": "A fall in collateral value can trigger liquidation rules in leveraged DeFi positions.",
+      "caveat": "The borrower may add collateral, repay debt or remain above the liquidation threshold.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "bis-defi"
+      ]
+    },
+    {
+      "id": "reserve-spillover",
+      "from": "reserve-sales",
+      "to": "market-liquidity",
+      "label": "Selling meets market depth",
+      "explanation": "Concentrated reserve sales could add pressure to the market for the underlying reserve assets.",
+      "caveat": "The size, timing and depth of the reserve market determine whether a meaningful spillover occurs.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-stablecoins"
+      ]
+    },
+    {
+      "id": "forced-selling",
+      "from": "liquidations",
+      "to": "market-liquidity",
+      "label": "Liquidations consume liquidity",
+      "explanation": "Forced sales can use up available trading liquidity and amplify stress across connected DeFi markets.",
+      "caveat": "Other participants may supply liquidity. This map does not estimate the size or direction of an asset's price move.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-defi"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bis-stablecoins",
+      "title": "BIS: stablecoins and financial stability",
+      "url": "https://www.bis.org/fsi/publ/insights57.pdf"
+    },
+    {
+      "id": "bis-defi",
+      "title": "BIS: DeFi risks and the decentralisation illusion",
+      "url": "https://www.bis.org/publications/defi-risks-and-decentralisation-illusion"
+    }
+  ]
+}

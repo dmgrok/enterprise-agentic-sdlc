@@ -1,0 +1,12 @@
+schema_version: '1'
+product: Market Detective
+approved_label: 'agent:ready'
+case_label: 'site:case'
+allowed_author_associations: [OWNER]
+allowed_actor_permissions: [admin, maintain, write]
+allowed_path_prefix: site/cases/
+maximum_changed_files: 1
+maximum_case_bytes: 16000
+maximum_open_worker_prs: 2
+merge: human_review
+model_calls: 0

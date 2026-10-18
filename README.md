@@ -6,6 +6,18 @@ that can deny the next model call, withhold an output, pause a run, or request c
 
 [![Tests](https://github.com/dmgrok/enterprise-agentic-sdlc/actions/workflows/ci.yml/badge.svg)](https://github.com/dmgrok/enterprise-agentic-sdlc/actions/workflows/ci.yml)
 
+## Explore Market Detective
+
+[Open the GitHub Pages demo](https://dmgrok.github.io/enterprise-agentic-sdlc/): investigate how a rate signal,
+stablecoin depeg or market flow might travel between assets. Select a connection, inspect its primary sources,
+then challenge the link. Episodes are illustrative; the app does not provide live prices or price forecasts.
+
+The site is a working delivery testbed. Open tickets refresh its delivery notebook. A maintainer-approved case
+ticket can produce a one-file draft PR; required checks gate merging, and Pages publishes the accepted change.
+The first worker is deterministic and makes zero model calls. It does not pretend to be an autonomous LLM engineer.
+The LLM controller remains local-only. See the [delivery guide](docs/market-detective.md),
+[site policy YAML](.kit/site-policy.yml), and [case request form](https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new?template=market-case.yml).
+
 **Integration prototype.** The governed recipe compiles against `gh-aw v0.92.0`. Its admission hooks,
 reservation-aware model gateway, independent artifact collector and staging broker have executable fixture tests.
 A live local Copilot CLI pilot has verified native inference, billing settlement, independent artifact checks,

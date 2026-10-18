@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Investigate how market events travel between equities and digital assets. Inspect the evidence. Challenge the connections.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action https://github.com">
+  <title>Market Detective — Follow the connection</title>
+  <link rel="icon" href="./mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#investigation">Skip to investigation</a>
+  <header class="masthead wrap">
+    <a class="brand" href="./"><img src="./mark.svg" width="34" height="34" alt="">Market Detective<span class="edition">An open investigation</span></a>
+    <nav aria-label="Main navigation"><a href="#investigation">Investigate</a><a href="#delivery">Delivery notebook</a><a class="request-link" href="https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new/choose">Suggest a case <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main>
+    <section class="intro wrap">
+      <div><p class="kicker"><span class="status-dot"></span>Equities meet digital assets</p><h1>Follow the market’s<br>chain reaction.</h1></div>
+      <div class="intro-copy"><p>A rate surprise. A broken peg. An unexpected flow.</p><p>Trace what could happen next, inspect the evidence, and question the connection.</p><p class="data-note">Illustrative episodes. Documented mechanisms.<br>No live prices or price forecasts.</p></div>
+    </section>
+    <section class="workspace wrap" id="investigation" aria-label="Market investigation">
+      <aside class="case-index"><div class="section-heading"><h2>Open a case</h2><span id="case-count"></span></div><div id="cases" class="cases" aria-label="Market cases"></div><div class="index-note"><span class="mini-orbit" aria-hidden="true">◎</span><p>Markets share channels.<br>A headline is only the start.</p></div></aside>
+      <div class="case-main">
+        <div class="case-heading"><div><p id="case-category" class="category"></p><h2 id="case-title">Loading the investigation…</h2><p id="case-subtitle"></p></div><span class="episode-label">Illustrative case</span></div>
+        <div id="load-error" class="error" hidden><p>The case files could not be loaded. Reload the page to try again.</p><button id="reload">Reload cases</button></div>
+        <div class="map-key"><span><i class="key-dot event-key"></i>Trigger</span><span><i class="key-dot"></i>Transmission</span><span><i class="key-dot asset-key"></i>Market effect</span><span class="key-instruction">Select a connection to investigate</span></div>
+        <p class="mobile-map-hint">Swipe across the map to follow the connections.</p>
+        <div class="map-frame" tabindex="0" role="region" aria-label="Scrollable transmission map"><svg id="network" viewBox="0 0 1000 480" role="group" aria-label="Market event transmission map"></svg></div>
+        <div class="map-summary"><p id="reachability" role="status" aria-live="polite"></p><button id="reset-links" class="text-button" hidden>Restore all connections</button></div>
+        <div class="case-summary"><span class="summary-label">The investigation</span><p id="case-summary"></p></div>
+        <details class="method"><summary>How to read this map</summary><p>Arrows show a possible transmission channel, not a measured causal effect. A source can support a mechanism without proving it explains a particular market move. Challenging a link removes it from this diagram only. Connected nodes are a graph calculation, not a risk score or probability.</p><p>Reachability = nodes with an unbroken directed path from the starting event. The map leaves out many real-world influences.</p></details>
+      </div>
+      <aside class="evidence" aria-label="Connection evidence"><div class="section-heading"><h2>Follow the evidence</h2><span class="notebook-symbol" aria-hidden="true">↳</span></div><div id="evidence-content"></div></aside>
+    </section>
+    <section class="delivery wrap" id="delivery">
+      <div class="delivery-intro"><p class="kicker">Built in the open</p><h2>The next investigation<br>starts with a ticket.</h2><p>Propose a case. Make its acceptance criteria explicit. Follow it through review, checks and deployment.</p><a class="request-link" href="https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new/choose">Open a ticket <span aria-hidden="true">↗</span></a></div>
+      <div class="delivery-work"><ol class="delivery-flow"><li>Issue</li><li>Scoped PR</li><li>Required checks</li><li>Pages release</li></ol><div id="delivery-list" class="delivery-list"><p>Loading the delivery notebook…</p></div><p id="automation-note" class="delivery-note">Case automation status is loading. Code changes require engineering review. The LLM controller remains local-only.</p></div>
+    </section>
+  </main>
+  <footer class="footer wrap"><div><strong>Market Detective</strong><p>An educational experiment in connected markets and governed delivery.</p></div><div><a href="https://github.com/dmgrok/enterprise-agentic-sdlc">Source &amp; methodology</a><p id="build-receipt"></p></div></footer>
+  <noscript><p class="wrap">Enable JavaScript to explore the transmission maps. The case files and sources are also available in the repository.</p></noscript>
+</body>
+</html>

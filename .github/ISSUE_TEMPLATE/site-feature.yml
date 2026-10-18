@@ -1,0 +1,19 @@
+name: Improve Market Detective
+description: Request an interface or investigation feature through a reviewable engineering ticket.
+title: '[Site] '
+labels: ['site:feature']
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User outcome
+      description: What should a person be able to understand or do?
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: State observable behavior, edge cases, accessibility and what stays outside scope.
+    validations:
+      required: true

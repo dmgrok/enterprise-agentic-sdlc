@@ -29,10 +29,11 @@ export function verifyChangedFiles(comparison, expectedPath) {
 export async function deliver(api, issueNumber, actor, policy) {
   const issue = await api('GET', `/issues/${issueNumber}`);
   const account = await api('GET', `/collaborators/${encodeURIComponent(actor)}/permission`);
-  const proposed = evaluateIssue(issue, account.permission, policy);
   const branch = `codex/market-case-${issueNumber}`;
   const existing = await api('GET', '/pulls?state=all&head=' + encodeURIComponent(api.owner + ':' + branch));
   if (existing.length) return { state: 'already-proposed', pull_request: existing[0].html_url, model_calls: 0 };
+  // Approval is consumed after the first proposal. Queued duplicate events are read-only no-ops.
+  const proposed = evaluateIssue(issue, account.permission, policy);
   const open = await api('GET', '/pulls?state=open&per_page=100');
   if (open.filter(pr => pr.head.ref.startsWith('codex/market-case-')).length >= policy.maximum_open_worker_prs) throw new Error('Open worker PR ceiling reached');
   const repository = await api('GET', '');
@@ -55,7 +56,7 @@ export async function deliver(api, issueNumber, actor, policy) {
     body: `Adds one validated, sourced illustrative market case.\n\nCloses #${issueNumber}\n\n` +
       `Scope: \`${proposed.path}\` only. Policy/base revision: \`${baseSha}\`.\n\n` +
       'The bounded content worker made **zero model calls**. This is deterministic content delivery, not LLM-generated code. ' +
-      'Required tests and dependency review run explicitly because PR creation with GITHUB_TOKEN does not trigger ordinary PR workflows. ' +
+      'Tests and dependency review are explicitly dispatched. GitHub also creates approval-required PR workflow runs; a maintainer must approve those before merging. ' +
       'The proposal remains a draft for maintainer review; the worker cannot merge or deploy it.' });
   // Explicit dispatches are permitted GITHUB_TOKEN events. Check runs attach to the proposed head SHA.
   await api('POST', '/actions/workflows/ci.yml/dispatches', { ref: branch });

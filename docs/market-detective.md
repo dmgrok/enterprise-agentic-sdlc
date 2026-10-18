@@ -4,8 +4,9 @@ The product helps a reader investigate connections between market events, equiti
 It shows explanatory transmission maps, source documents, caveats and a reversible challenged-link state.
 Cases are explicitly illustrative. A documented mechanism is not proof of an episode's cause or a price forecast.
 
-The initial cases cover monetary-policy transmission and a stablecoin losing its peg. A third case is intended
-to arrive through an actual ticket and PR, proving that the delivery loop changes the deployed product.
+The initial cases cover monetary-policy transmission and a stablecoin losing its peg. The third case, on crypto
+venue outages and ETP execution, arrived through [ticket #3](https://github.com/dmgrok/enterprise-agentic-sdlc/issues/3)
+and [worker PR #4](https://github.com/dmgrok/enterprise-agentic-sdlc/pull/4), exercising the real delivery loop.
 
 ## The delivery contract
 
@@ -14,7 +15,8 @@ to arrive through an actual ticket and PR, proving that the delivery loop change
 3. A bounded content worker verifies author/actor authority, policy and the case graph. It proposes exactly one
    new JSON file under `site/cases/`, verifies the server-side diff, and opens a **draft** PR.
 4. It explicitly dispatches the test and dependency workflows. Both check runs bind to the proposed commit.
-5. A maintainer reviews the result, marks it ready, and merges after required checks pass.
+5. A maintainer reviews the result, approves GitHub's pending PR workflow runs, marks the PR ready, and merges
+   after required checks pass. Explicit dispatches do not waive the separate PR-run approval.
 6. Pages validates and builds the new main revision, refreshes its real issue notebook and deploys the artifact.
 
 The worker never merges or deploys. Opening arbitrary tickets does not grant code execution or bypass review.
@@ -73,10 +75,12 @@ requires explicit reconciliation; there is no automatic overwrite, retry, budget
   Without it, the worker does not run and the public notebook accurately reports manual proposal mode.
   To stop future jobs, disable that variable. Cancel any in-flight job in Actions; every worker also has a three-minute ceiling.
 
-PRs created with `GITHUB_TOKEN` do not trigger ordinary PR workflows. Explicit `workflow_dispatch` calls are used
-for both required checks, with immutable base/head SHAs for dependency review and the head branch for check-run
-association. This avoids a PR that appears created but has no checks. The dependency threshold is read from the
-base SHA, so the proposed change cannot lower its own acceptance policy.
+GitHub creates **approval-required** PR workflow runs for PRs opened with `GITHUB_TOKEN`. In the PR merge box,
+a maintainer selects **Approve workflows to run** after reviewing the diff. The worker never approves its own runs.
+Explicit `workflow_dispatch` calls additionally provide early checks, with immutable base/head SHAs for dependency
+review and the head branch for check-run association. Both paths must be understood when reading Actions: a green
+dispatch does not remove a pending PR approval. The dependency threshold is read from the base SHA, so the proposed
+change cannot lower its own acceptance policy. See [GitHub's token event rules](https://docs.github.com/en/actions/concepts/security/github_token).
 
 The worker needs repository contents, issues, PR and Actions writes for these bounded operations. Its code and
 policy therefore belong to the protected main trust boundary. Never replace the validator with execution of
@@ -110,7 +114,7 @@ The site has no runtime npm dependencies, third-party font requests, model calls
 ## Sources and limitations
 
 The sources are linked on each connection. Rate and equity-valuation mechanisms use Federal Reserve material;
-stablecoin/leverage mechanisms use BIS material; the ETF case should use SEC/investor-education sources.
+stablecoin/leverage mechanisms use BIS material; the crypto ETP case uses SEC/investor-education sources.
 Digital-asset responses to macro conditions remain explicitly context dependent. The diagrams are curated
 investigation aids, not measured causal models, forecasts, investment recommendations or live news.
 

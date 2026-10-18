@@ -26,11 +26,15 @@ test('the server-side comparison must prove one added case file', () => {
     assert.throws(() => verifyChangedFiles({ total_commits: 1, files }, 'site/cases/new-case.json'));
   }
 });
-function fakeApi({ prior = false, escape = false } = {}) {
+function fakeApi({ prior = false, escape = false, consumed = false } = {}) {
   const calls = [];
   const api = async (method, path, body) => {
     calls.push({ method, path, body });
-    if (method === 'GET' && path === '/issues/7') return issue();
+    if (method === 'GET' && path === '/issues/7') {
+      const value = issue();
+      if (consumed) value.labels = [{ name: 'site:case' }, { name: 'agent:proposed' }];
+      return value;
+    }
     if (path.includes('/permission')) return { permission: 'admin' };
     if (path.startsWith('/pulls?state=all')) return prior ? [{ html_url: 'https://github.com/example/project/pull/8' }] : [];
     if (path.startsWith('/pulls?state=open')) return [];
@@ -58,6 +62,12 @@ test('delivery opens a draft, dispatches both required checks and never merges',
 test('duplicate events do not create another commit or dispatch', async () => {
   const api = fakeApi({ prior: true }); assert.equal((await deliver(api, 7, 'maintainer', policy)).state, 'already-proposed');
   assert.equal(api.calls.some(call => call.method !== 'GET'), false);
+});
+test('queued duplicate events remain read-only after approval is consumed', async () => {
+  const api = fakeApi({ prior: true, consumed: true });
+  assert.equal((await deliver(api, 7, 'maintainer', policy)).state, 'already-proposed');
+  assert.equal(api.calls.some(call => call.method !== 'GET'), false);
+  await assert.rejects(deliver(fakeApi({ consumed: true }), 7, 'maintainer', policy));
 });
 test('an escaped diff is rejected before a branch or PR is published', async () => {
   const api = fakeApi({ escape: true }); await assert.rejects(deliver(api, 7, 'maintainer', policy));

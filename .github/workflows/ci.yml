@@ -37,3 +37,16 @@ jobs:
         run: python examples/control_demo.py
       - name: Exercise HTTP gateway and artifact integration
         run: python examples/http_demo.py
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tools/diagrams/package-lock.json
+      - name: Install pinned diagram tooling
+        working-directory: tools/diagrams
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+        run: npm ci --ignore-scripts
+      - name: Validate diagram syntax with the renderer
+        working-directory: tools/diagrams
+        run: npm run check:diagrams

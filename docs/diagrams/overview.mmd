@@ -1,0 +1,16 @@
+flowchart TB
+    accTitle: The agent executes while an independent controller supervises
+    accDescr: The agent reaches the provider through a model gateway. Independent checks and a human operator feed the controller, which allows or denies calls at the gateway.
+
+    subgraph work["EXECUTION"]
+        direction LR
+        Agent["Agent"] --> Gateway["Model gateway"] --> Provider["Model provider"]
+    end
+
+    subgraph control["INDEPENDENT OVERSIGHT"]
+        direction LR
+        Checks["Mission and quality checks"] --> Controller["Controller"]
+        Human["Human operator"] --> Controller
+    end
+
+    Controller -->|Allow or deny calls| Gateway

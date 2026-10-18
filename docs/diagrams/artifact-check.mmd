@@ -1,0 +1,10 @@
+flowchart TB
+    accTitle: Independent checks bind approval evidence to the exact artifact being staged
+    accDescr: The agent drafts a file. The collector checks the actual file and records its digest. The controller verifies that digest and current run health before the staging broker saves the artifact.
+
+    Draft["Agent drafts a file"]
+    Check["Independent collector<br/>Checks the actual file and records its digest"]
+    Verify["Controller<br/>Verifies that digest and current run health"]
+    Stage["Staging broker<br/>Saves the exact checked artifact"]
+
+    Draft --> Check --> Verify --> Stage

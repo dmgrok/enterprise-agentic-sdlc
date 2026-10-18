@@ -25,3 +25,10 @@ diagrams aligned with executable paths, and distinguish deployment requirements
 from verified behavior. Do not commit keys, credential files, control databases,
 private source material or provider responses. Use conventional commit messages
 and describe relevant checks in pull requests.
+
+## Update a diagram
+
+Edit the Mermaid sources in `docs/diagrams/`, render their SVGs with the pinned
+tools, and inspect the result before committing. See the
+[diagram guide](docs/diagrams/README.md). The README embeds the generated SVGs;
+CI also renders every source to catch Mermaid syntax errors.

@@ -1,0 +1,21 @@
+flowchart TB
+    accTitle: A model call is admitted only when mission, quality and spend are within policy
+    accDescr: Check the three axes and available budget before reserving cost and calling the provider. Reject unhealthy calls without contacting the provider. Record actual usage and return the result only if the run is still healthy.
+
+    Request["1. Agent requests a model call"]
+    Gate{"All three axes healthy?"}
+    Block["Reject the request<br/>Provider is not called"]
+    Reserve["2. Reserve the maximum cost"]
+    Call["3. Call the model provider"]
+    Settle["4. Record the actual cost"]
+    Return["5. Return the result if still healthy<br/>Otherwise withhold it"]
+
+    Request --> Gate
+    Gate -->|No| Block
+    Gate -->|Yes| Reserve
+    Reserve --> Call --> Settle --> Return
+
+    classDef decision fill:#fff3d6,stroke:#9a6700,color:#412c00
+    classDef blocked fill:#fff0ef,stroke:#c33d35,color:#641e16
+    class Gate decision
+    class Block blocked

@@ -1,0 +1,12 @@
+flowchart TB
+    accTitle: Six delivery gates from intent to incident feedback
+    accDescr: Intent defines the problem, specification defines success, plan bounds the changes, implementation provides tested code, release requires approval, and incident feedback informs the next intent.
+
+    Intent["1. Intent<br/>Which problem?"]
+    Spec["2. Specification<br/>What must be true?"]
+    Plan["3. Plan<br/>What may change?"]
+    Code["4. Implementation PR<br/>Does it pass review and tests?"]
+    Release["5. Release<br/>Can it be deployed?"]
+    Learn["6. Incident feedback<br/>What should change next?"]
+
+    Intent --> Spec --> Plan --> Code --> Release --> Learn

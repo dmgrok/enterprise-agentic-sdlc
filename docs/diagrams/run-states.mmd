@@ -1,0 +1,11 @@
+flowchart LR
+    accTitle: Paused runs need a human resume and stopped runs cannot restart
+    accDescr: A new run starts paused with calls and outputs blocked. A human may resume it after fresh checks pass. An unhealthy running run pauses, and a hard limit or human decision stops it permanently. A human may also stop a paused run.
+
+    Paused["Paused<br/>Calls and outputs blocked"]
+    Running["Running<br/>All three axes healthy"]
+    Stopped["Stopped<br/>This run cannot restart"]
+
+    Paused -->|Resume| Running
+    Running -->|Pause| Paused
+    Running -->|Stop| Stopped

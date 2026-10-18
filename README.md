@@ -23,51 +23,30 @@ staged. This is not a production release or a compliance certification.
 Schema checks establish structure and scope. Human acceptance and task-specific evaluations still establish whether
 an artifact solves the original problem.
 
-## Architecture and trust boundaries
+## Who runs the agent, and who controls it?
 
-```mermaid
-flowchart LR
-    O["Operator"] -->|"Pause / stop / explicit resume"| C
-    Q["Independent collector"] -->|"Signed mission and quality evidence"| C
-    subgraph plane["Protected control plane"]
-        C["Three-axis controller"] --> D[("SQLite policy, ledger and audit")]
-        G["Model gateway"] -->|"Reserve and settle"| C
-        W["Artifact staging broker"] -->|"Recheck state and digest"| C
-        X["External watchdog"] -->|"Read control state"| C
-    end
-    subgraph execution["GitHub Actions / gh-aw"]
-        P["Pre-agent admission hook"] --> A["Sandboxed agent"]
-        A --> F["Final output-check hook"]
-        F --> S["Staged safe outputs"]
-    end
-    P -->|"Bound repository, run, attempt and SHA"| C
-    A -->|"Scoped inference credential"| G
-    G --> M["Fixed provider endpoint"]
-    A -->|"Proposed work artifact"| Q
-    Q -->|"Validated exact artifact"| W
-    F -->|"Fresh quality evidence required"| C
-    X -.->|"Cancel; force-cancel if necessary"| A
-```
+The agent does the work. A separate controller decides whether it may continue.
+The human operator can pause or stop it at any time.
+
+![The agent reaches the provider through a gateway supervised by an independent controller.](docs/diagrams/overview.svg)
 
 The agent credential can request inference and check admission for **one enrolled run**. It cannot create policy,
 sign telemetry, resume itself or stage writes. Collector, operator and writer credentials are separate.
 The real provider key lives in the gateway. Deployment must keep the control database, signing key and those
 privileged credentials outside the agent's filesystem and network authority.
 
-The diagram describes the integration components. The repository supplies their implementation and a compiled
-recipe; hosting, TLS, secret provisioning, collectors and the external watchdog remain deployment work.
+The overview shows the model-call path. The controller also governs artifact staging and an external watchdog
+can request cancellation. Those details are explained in the flows below and the
+[integration guide](docs/integration.md). Hosting and operational setup remain deployment work.
 
-## Delivery lifecycle
+Diagrams use rendered SVGs for reliable GitHub display. Their
+[editable Mermaid sources](docs/diagrams/) are checked with the renderer in CI.
 
-```mermaid
-flowchart LR
-    I["Intent"] -->|"Product owner"| S["Specification"]
-    S -->|"Product + technical owners"| P["Plan"]
-    P -->|"Responsible engineer"| PR["Implementation PR"]
-    PR -->|"Code owner + checks"| R["Release"]
-    R -->|"Environment approval"| F["Incident feedback"]
-    F -->|"New bounded work"| I
-```
+## Six delivery gates
+
+Each gate answers one question. Agents propose the evidence; a responsible person decides whether to proceed.
+
+![Six delivery gates from defining the problem to learning from incidents.](docs/diagrams/lifecycle.svg)
 
 Agents propose artifacts; people decide. Approval authority comes from trusted platform records, never an
 `approved: true` field. The offline evaluator covers all six contracts. The packaged workflows currently draft
@@ -76,29 +55,11 @@ Agents propose artifacts; people decide. Approval authority comes from trusted p
 
 ## Follow one model call
 
-```mermaid
-sequenceDiagram
-    participant A as gh-aw agent
-    participant G as Model gateway
-    participant C as Controller
-    participant P as Provider
-    A->>G: Chat request with run-scoped token
-    G->>C: Check health; reserve worst-case cost
-    alt Any axis unhealthy or insufficient budget
-        C-->>G: Denied; persist pause or stop
-        G-->>A: Request rejected before provider call
-    else Admission succeeds
-        C-->>G: Reservation recorded
-        G->>P: Fixed model; bounded output; controller-owned credential
-        P-->>G: Completion and usage
-        G->>C: Settle actual charge
-        alt Run remains healthy
-            G-->>A: Completion, or buffered SSE
-        else Stop or reconciliation required
-            G-->>A: Response withheld; outputs remain blocked
-        end
-    end
-```
+The gateway checks mission, quality, spending limits and the cost of this request **before** contacting the provider.
+It records the actual cost afterward.
+The rejection branch does not spend money on a provider request.
+
+![A model call is rejected before reaching the provider unless all three axes are healthy and its cost can be reserved.](docs/diagrams/model-call.svg)
 
 Budget admission counts **settled spend + every outstanding maximum reservation + the proposed request**.
 Retries keep their accumulated spend. Unknown provider usage retains the reservation and pauses the run.
@@ -112,16 +73,10 @@ provider-specific fees and live streaming are not implemented. Runner and storag
 
 ## Pause, stop and resume
 
-```mermaid
-stateDiagram-v2
-    [*] --> Paused: Enroll immutable policy
-    Paused --> Running: Fresh healthy evidence and explicit operator resume
-    Running --> Paused: Failed check, stale telemetry or burn-rate limit
-    Running --> Stopped: Scope escape, budget ceiling, repair ceiling or operator stop
-    Paused --> Stopped: Operator stop or hard ceiling
-    Running --> Paused: GitHub execution completed; await final gate
-    Stopped --> [*]: Terminal for this enrolled run
-```
+A new run starts paused. Resuming it needs fresh healthy checks and an explicit human decision.
+A human can stop either a running or paused run. A stop ends this enrolled run permanently.
+
+![A run starts paused, needs a human decision to resume, and cannot resume after a terminal stop.](docs/diagrams/run-states.svg)
 
 Pause denies new calls and outputs. The local supervisor terminates the current process; the GitHub watchdog
 requests cancellation of the attempt. Resume is a new explicit execution decision, not suspension of an in-flight
@@ -186,19 +141,16 @@ The collector wraps this as `{ "event": EVENT, "signature": HMAC_SHA256 }`. The 
 It authenticates a trusted collector, not the truth of an agent's own statements. The independent collector checks
 actual files and the broker recomputes the artifact digest before staging.
 
-```mermaid
-erDiagram
-    RUN ||--|| POLICY_SNAPSHOT : freezes
-    RUN ||--o{ OBSERVATION : receives
-    RUN ||--o{ RESERVATION : admits
-    RESERVATION ||--o| SETTLEMENT : reconciles
-    RUN ||--o{ AUDIT_EVENT : records
-    OBSERVATION }o--o| ARTIFACT_DIGEST : identifies
-    POLICY_SNAPSHOT ||--|| GITHUB_BINDING : constrains
-```
+### Before an artifact is staged
 
-This is the logical data model. SQLite stores run snapshots as JSON plus an append-only application audit table;
-it does not create a separate SQL table for every entity in the diagram.
+![Independent checks identify the exact artifact by its digest before the controller permits staging.](docs/diagrams/artifact-check.svg)
+
+A valid signature alone does not establish quality. The collector must check the actual file; the broker then
+compares its digest with that evidence. A failed check, changed artifact or unhealthy run blocks staging.
+Staging still requires a separate human acceptance decision before production use.
+
+Each run retains its policy snapshot, observations, cost reservations and audit history. See the schema links
+above for field-level details.
 
 ## Connect the governed gh-aw recipe
 

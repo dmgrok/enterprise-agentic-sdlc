@@ -1,0 +1,94 @@
+{
+  "schema_version": "1",
+  "id": "crypto-venue-outage",
+  "title": "When crypto trading pauses",
+  "subtitle": "A trading interruption can travel through the ETP wrapper.",
+  "category": "Market structure",
+  "episode": "illustrative",
+  "summary": "A crypto exchange outage and an exchange-traded product are connected through arbitrage and execution. Investigate that connection before interpreting a share-price gap as a change in the underlying asset. This is an illustrative mechanism, not a claim about a particular outage or a forecast.",
+  "nodes": [
+    {
+      "id": "venue-outage",
+      "label": "Crypto venue outage",
+      "detail": "One trading platform pauses",
+      "kind": "event",
+      "column": 0,
+      "row": 1
+    },
+    {
+      "id": "arbitrage-friction",
+      "label": "Arbitrage friction",
+      "detail": "Trading and settlement routes",
+      "kind": "mechanism",
+      "column": 1,
+      "row": 1
+    },
+    {
+      "id": "share-gap",
+      "label": "Share-price gap",
+      "detail": "Market price versus asset value",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 1
+    },
+    {
+      "id": "execution-price",
+      "label": "Investor execution",
+      "detail": "The price actually paid",
+      "kind": "asset",
+      "column": 3,
+      "row": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "outage-friction",
+      "from": "venue-outage",
+      "to": "arbitrage-friction",
+      "label": "A route becomes unavailable",
+      "explanation": "SEC staff identifies closed or unavailable crypto trading platforms as a potential disruption to ETP arbitrage. Check which venues and settlement routes a product actually relies on.",
+      "caveat": "Other venues may remain accessible. One outage does not establish that creations or redemptions have stopped.",
+      "strength": "Context dependent",
+      "sources": [
+        "sec-etp-mechanics"
+      ]
+    },
+    {
+      "id": "friction-gap",
+      "from": "arbitrage-friction",
+      "to": "share-gap",
+      "label": "Investigate a gap in pricing",
+      "explanation": "A spot crypto ETP share can trade above or below the value of its holdings. Impaired arbitrage is a possible explanation to investigate alongside investor demand and product-specific conditions.",
+      "caveat": "A gap is not guaranteed. Verify the timestamp, trading hours and valuation method before comparing prices.",
+      "strength": "Context dependent",
+      "sources": [
+        "sec-etp-mechanics",
+        "sec-investor-bulletin"
+      ]
+    },
+    {
+      "id": "gap-execution",
+      "from": "share-gap",
+      "to": "execution-price",
+      "label": "The traded price matters",
+      "explanation": "Investors buying ETP shares transact at the available market price. A premium or discount therefore matters to execution even when the underlying crypto price has not changed.",
+      "caveat": "This is not a return forecast. Spreads, fees, order type and the eventual selling price also affect the result.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "sec-investor-bulletin"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sec-etp-mechanics",
+      "title": "SEC staff: crypto ETP creation, redemption and arbitrage disclosures",
+      "url": "https://www.sec.gov/newsroom/speeches-statements/cf-crypto-asset-exchange-traded-products-070125"
+    },
+    {
+      "id": "sec-investor-bulletin",
+      "title": "SEC investor bulletin: spot Bitcoin and Ether ETPs",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/ETPBulletinSeptember2024"
+    }
+  ]
+}

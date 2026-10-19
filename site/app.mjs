@@ -123,7 +123,7 @@ function renderEvidence() {
 function renderDelivery(data) {
   const list = $('#delivery-list'); list.replaceChildren();
   $('#automation-note').textContent = data.case_automation
-    ? 'Approved case tickets use a bounded content worker with zero model calls. Code changes require engineering review. The LLM controller remains local-only.'
+    ? 'Text requests need research and preparation before review. Approved prepared cases use a bounded worker with zero model calls. Code changes require engineering review. The LLM controller remains local-only.'
     : 'Automatic case proposals are disabled. Tickets still update this notebook; maintainers can prepare PRs manually. The LLM controller remains local-only.';
   if (!data.issues.length) list.append(element('p', 'empty-notebook', 'The notebook is open. Suggest the next market connection to investigate.'));
   for (const issue of data.issues.slice(0, 6)) {
@@ -132,7 +132,7 @@ function renderDelivery(data) {
     description.append(link(issue.title, issue.url, 'delivery-title'), element('div', 'delivery-id', `Issue #${issue.number}`));
     const labels = new Set(issue.labels);
     const status = issue.state === 'closed' ? ['Closed', 'shipped'] : labels.has('agent:blocked') ? ['Needs attention', 'blocked']
-      : labels.has('agent:proposed') ? ['PR proposed', 'proposed'] : labels.has('agent:ready') ? ['Approved for worker', 'proposed'] : ['Open', ''];
+      : labels.has('agent:proposed') ? ['PR proposed', 'proposed'] : labels.has('agent:ready') ? ['Approved for worker', 'proposed'] : labels.has('agent:needs-preparation') ? ['Awaiting preparation', ''] : ['Open', ''];
     row.append(description, element('span', 'ticket-state ' + status[1], status[0])); list.append(row);
   }
   $('#build-receipt').textContent = `Release ${data.revision.slice(0, 7)} • Notebook refreshed ${new Date(data.generated_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`;

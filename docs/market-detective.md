@@ -11,7 +11,8 @@ and [worker PR #4](https://github.com/dmgrok/enterprise-agentic-sdlc/pull/4), ex
 ## The delivery contract
 
 1. An issue records the user question and acceptance criteria. Its title appears in the site's release notebook.
-2. A maintainer reviews a structured case and adds `agent:ready`.
+2. A local agent or maintainer researches the text request and prepares its structured case in a trusted comment.
+   A maintainer reviews the evidence and fit to the question, then adds `agent:ready`.
 3. A bounded content worker verifies author/actor authority, policy and the case graph. It proposes exactly one
    new JSON file under `site/cases/`, verifies the server-side diff, and opens a **draft** PR.
 4. It explicitly dispatches the test and dependency workflows. Both check runs bind to the proposed commit.
@@ -41,27 +42,32 @@ does not prove that a source supports the explanation; that remains a review res
 
 ## Request a market case
 
-Use **Investigate a market connection** in the GitHub issue chooser. Copy a complete example from `site/cases/`,
-choose a new ID and edit the question, nodes, edges and sources. GitHub wraps the JSON textarea in a code fence.
-The parser accepts exactly one JSON fence and never evaluates its contents. Use short node labels that fit in
-two lines; all sources must be HTTPS primary-source links from the allowed origins.
+Use **Suggest a market investigation** in the GitHub issue chooser. Describe the event and what you want to
+understand. Useful outcomes and links are optional. No JSON, source allowlist knowledge or graph design is required.
 
-For a programmatic issue, use this body shape:
+For example:
 
-````markdown
-### What should this explain?
-State the user question and observable acceptance criteria.
+> A major open-source AI model is released, such as DeepSeek, GLM or Qwen. How could this affect AI companies,
+> chip makers and cloud providers? Could cheaper AI reduce spending, or grow adoption enough to offset the savings?
+> Show competing explanations, supporting evidence and what could prove each explanation wrong.
 
-### Case JSON
-```json
-{ "complete": "copy and adapt one of the real examples, not this placeholder" }
-```
-````
+The request is labelled `agent:needs-preparation`, and the public notebook shows **Awaiting preparation**.
+The local agent or maintainer researches it, distinguishes release facts from provider claims, and prepares
+an internal case. Source and graph requirements apply to that prepared output, never to the human request.
+Preparation is currently an operator-run local step; opening a prose ticket does not start a hosted LLM.
 
-Only after reviewing the case should a maintainer add `agent:ready`. A failed proposal gets `agent:blocked`
-and the approval label is removed. Fix the evidence or scope, inspect the failure, then explicitly approve
+The prepared case lives in an owner-authored comment, produced with `scripts/prepared_site_case.mjs`. Its marker
+binds it to the issue number and SHA-256 of the exact request body. Editing the request requires fresh preparation.
+The worker ignores untrusted comments and rejects ambiguous, invalid or stale preparation. Old structured tickets
+remain compatible. No ticket or comment is executed as code.
+
+Only after reviewing the result should a maintainer add `agent:ready`. Missing preparation removes that approval
+and returns the request to `agent:needs-preparation`; it does not treat a normal prose request as an invalid case.
+Other failed proposals get `agent:blocked`. Fix the evidence or scope, inspect the failure, then explicitly approve
 another attempt. Duplicate events cannot create duplicate PRs. An interrupted proposal with an existing branch
-requires explicit reconciliation; there is no automatic overwrite, retry, budget reset or auto-merge.
+requires explicit reconciliation; there is no automatic overwrite, budget reset or auto-merge.
+
+See [the agent preparation guide](market-case-preparation.md) for the internal research and handoff contract.
 
 ## Required GitHub settings
 

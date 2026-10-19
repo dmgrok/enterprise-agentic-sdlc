@@ -2,8 +2,9 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolve, dirname } from 'node:path';
 import { parseIssue } from '../site/model.mjs';
+import { preparedBody } from './prepared_site_case.mjs';
 
-export function evaluateIssue(issue, actorPermission, policy) {
+function authorizeIssue(issue, actorPermission, policy) {
   if (policy.schema_version !== '1' || policy.model_calls !== 0 || policy.merge !== 'human_review'
     || policy.allowed_path_prefix !== 'site/cases/' || policy.maximum_changed_files !== 1
     || !Number.isInteger(policy.maximum_case_bytes) || policy.maximum_case_bytes > 16000
@@ -13,7 +14,11 @@ export function evaluateIssue(issue, actorPermission, policy) {
   if (issue.pull_request || issue.state !== 'open' || !labels.has(policy.approved_label) || !labels.has(policy.case_label)
     || !policy.allowed_author_associations.includes(issue.author_association)
     || !policy.allowed_actor_permissions.includes(actorPermission)) throw new Error('Issue is not approved for this worker');
-  const marketCase = parseIssue(issue.body);
+}
+
+export function evaluateIssue(issue, actorPermission, policy, candidateBody = issue.body) {
+  authorizeIssue(issue, actorPermission, policy);
+  const marketCase = parseIssue(candidateBody);
   const content = JSON.stringify(marketCase, null, 2) + '\n';
   if (Buffer.byteLength(content) > policy.maximum_case_bytes) throw new Error('Case exceeds policy size ceiling');
   return { path: policy.allowed_path_prefix + marketCase.id + '.json', content, marketCase };
@@ -33,7 +38,10 @@ export async function deliver(api, issueNumber, actor, policy) {
   const existing = await api('GET', '/pulls?state=all&head=' + encodeURIComponent(api.owner + ':' + branch));
   if (existing.length) return { state: 'already-proposed', pull_request: existing[0].html_url, model_calls: 0 };
   // Approval is consumed after the first proposal. Queued duplicate events are read-only no-ops.
-  const proposed = evaluateIssue(issue, account.permission, policy);
+  authorizeIssue(issue, account.permission, policy);
+  const comments = /```json\s*\n/.test(issue.body || '') ? []
+    : await api('GET', `/issues/${issueNumber}/comments?per_page=100`);
+  const proposed = evaluateIssue(issue, account.permission, policy, preparedBody(issue, comments));
   const open = await api('GET', '/pulls?state=open&per_page=100');
   if (open.filter(pr => pr.head.ref.startsWith('codex/market-case-')).length >= policy.maximum_open_worker_prs) throw new Error('Open worker PR ceiling reached');
   const repository = await api('GET', '');
@@ -63,6 +71,9 @@ export async function deliver(api, issueNumber, actor, policy) {
   await api('POST', '/actions/workflows/dependency-review.yml/dispatches', { ref: branch,
     inputs: { base_ref: baseSha, head_ref: commit.sha } });
   await api('DELETE', `/issues/${issueNumber}/labels/${encodeURIComponent(policy.approved_label)}`);
+  for (const label of ['agent:needs-preparation', 'agent:blocked']) {
+    if (issue.labels.some(item => item.name === label)) await api('DELETE', `/issues/${issueNumber}/labels/${encodeURIComponent(label)}`);
+  }
   await api('POST', `/issues/${issueNumber}/labels`, { labels: ['agent:proposed'] });
   await api('POST', `/issues/${issueNumber}/comments`, { body: `Proposed ${pr.html_url}. Scope and source contracts passed; CI and dependency review have been dispatched. **0 model calls.** A maintainer must review, mark ready and merge after required checks. No feature is deployed merely because its ticket was opened.` });
   return { state: 'proposed', pull_request: pr.html_url, head_sha: commit.sha, changed_files: [proposed.path], model_calls: 0 };
@@ -94,7 +105,7 @@ async function main() {
   } catch (error) {
     // A rejected proposal remains visible and never becomes an automatic retry/merge.
     await api('DELETE', `/issues/${issue}/labels/${encodeURIComponent(policy.approved_label)}`).catch(() => {});
-    await api('POST', `/issues/${issue}/labels`, { labels: ['agent:blocked'] }).catch(() => {});
+    await api('POST', `/issues/${issue}/labels`, { labels: [error.code === 'CASE_PREPARATION_REQUIRED' ? 'agent:needs-preparation' : 'agent:blocked'] }).catch(() => {});
     console.error('Case worker stopped:', error.message);
     process.exitCode = 1;
   }

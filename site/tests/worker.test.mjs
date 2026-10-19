@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { prepareComment } from '../../scripts/prepared_site_case.mjs';
 import { evaluateIssue, deliver, verifyChangedFiles } from '../../scripts/site_issue_worker.mjs';
 
 const marketCase = JSON.parse(readFileSync(new URL('../cases/stablecoin-fracture.json', import.meta.url)));
@@ -26,15 +27,19 @@ test('the server-side comparison must prove one added case file', () => {
     assert.throws(() => verifyChangedFiles({ total_commits: 1, files }, 'site/cases/new-case.json'));
   }
 });
-function fakeApi({ prior = false, escape = false, consumed = false } = {}) {
+function fakeApi({ prior = false, escape = false, consumed = false, prose = false, prepared = false } = {}) {
   const calls = [];
   const api = async (method, path, body) => {
     calls.push({ method, path, body });
     if (method === 'GET' && path === '/issues/7') {
       const value = issue();
+      value.number = 7;
+      if (prose) value.body = 'What happens to AI companies after an open model release?';
       if (consumed) value.labels = [{ name: 'site:case' }, { name: 'agent:proposed' }];
       return value;
     }
+    if (path === '/issues/7/comments?per_page=100') return prepared
+      ? [{ author_association: 'OWNER', body: prepareComment({ number: 7, body: 'What happens to AI companies after an open model release?' }, marketCase) }] : [];
     if (path.includes('/permission')) return { permission: 'admin' };
     if (path.startsWith('/pulls?state=all')) return prior ? [{ html_url: 'https://github.com/example/project/pull/8' }] : [];
     if (path.startsWith('/pulls?state=open')) return [];
@@ -72,4 +77,12 @@ test('queued duplicate events remain read-only after approval is consumed', asyn
 test('an escaped diff is rejected before a branch or PR is published', async () => {
   const api = fakeApi({ escape: true }); await assert.rejects(deliver(api, 7, 'maintainer', policy));
   assert.equal(api.calls.some(call => call.path === '/git/refs' || (call.path === '/pulls' && call.method === 'POST')), false);
+});
+
+test('prepared text requests deliver; unprepared prose never creates a branch', async () => {
+  const api = fakeApi({ prose: true, prepared: true });
+  assert.equal((await deliver(api, 7, 'maintainer', policy)).state, 'proposed');
+  const unprepared = fakeApi({ prose: true });
+  await assert.rejects(deliver(unprepared, 7, 'maintainer', policy), { code: 'CASE_PREPARATION_REQUIRED' });
+  assert.equal(unprepared.calls.some(call => call.method !== 'GET'), false);
 });

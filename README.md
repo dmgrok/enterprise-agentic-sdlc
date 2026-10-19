@@ -13,7 +13,7 @@ stablecoin depeg or market flow might travel between assets. Select a connection
 then challenge the link. Episodes are illustrative; the app does not provide live prices or price forecasts.
 
 The site is a working delivery testbed. Open tickets refresh its delivery notebook. A maintainer-approved case
-ticket can produce a one-file draft PR; required checks gate merging, and Pages publishes the accepted change.
+ticket, researched and prepared from the human's text request, can produce a one-file draft PR; required checks gate merging, and Pages publishes the accepted change.
 The first worker is deterministic and makes zero model calls. It does not pretend to be an autonomous LLM engineer.
 The LLM controller remains local-only. See the [delivery guide](docs/market-detective.md),
 [site policy YAML](.kit/site-policy.yml), and [case request form](https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new?template=market-case.yml).

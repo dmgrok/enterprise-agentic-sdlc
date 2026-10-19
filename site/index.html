@@ -14,12 +14,33 @@
   <a class="skip" href="#investigation">Skip to investigation</a>
   <header class="masthead wrap">
     <a class="brand" href="./"><img src="./mark.svg" width="34" height="34" alt="">Market Detective<span class="edition">An open investigation</span></a>
-    <nav aria-label="Main navigation"><a href="#investigation">Investigate</a><a href="#delivery">Delivery notebook</a><a class="request-link" href="https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new/choose">Suggest a case <span aria-hidden="true">↗</span></a></nav>
+    <nav aria-label="Main navigation"><a href="#market-analysis" id="open-market-analysis">Market moves</a><a href="#investigation">Mechanisms</a><a href="#delivery">Delivery notebook</a><a class="request-link" href="https://github.com/dmgrok/enterprise-agentic-sdlc/issues/new/choose">Suggest a case <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main>
     <section class="intro wrap">
       <div><p class="kicker"><span class="status-dot"></span>Equities meet digital assets</p><h1>Follow the market’s<br>chain reaction.</h1></div>
-      <div class="intro-copy"><p>A rate surprise. A broken peg. An unexpected flow.</p><p>Trace what could happen next, inspect the evidence, and question the connection.</p><p class="data-note">Illustrative episodes. Documented mechanisms.<br>No live prices or price forecasts.</p></div>
+      <div class="intro-copy"><p>A rate surprise. A broken peg. An unexpected flow.</p><p>Trace what could happen next, inspect the evidence, and question the connection.</p><p class="data-note">Illustrative mechanisms. Recorded market history.<br>No live prices or price forecasts.</p></div>
+    </section>
+    <section class="market-analysis wrap" id="market-analysis" aria-labelledby="market-title" hidden>
+      <div class="market-heading"><div><p class="kicker">DeepSeek R1 · Historical window · January 2025</p><h2 id="market-title">What actually moved?</h2><p>Compare the price evidence. Then investigate the explanation.</p></div><a class="market-map-link" href="#investigation">Inspect the mechanism map ↓</a></div>
+      <div id="market-groups" class="market-groups" role="group" aria-label="Explore market structure"></div>
+      <div id="market-loading" class="market-loading" role="status">Loading the recorded market window…</div>
+      <div id="market-body" hidden>
+        <div class="market-workspace">
+          <div class="market-plot-column">
+            <div id="market-events" class="market-events" role="group" aria-label="Choose the event baseline"></div>
+            <p id="market-event-note" class="market-event-note"></p>
+            <div class="market-controls"><label>Compare<select id="market-mode"><option value="indexed">Indexed prices</option><option value="relative">Return difference vs SPY</option></select></label><label>Window<select id="market-window"><option value="near">5 sessions before / after</option><option value="full">Full recorded window</option></select></label></div>
+            <div id="market-legend" class="market-legend" role="group" aria-label="Show or hide an asset"></div>
+            <p id="market-baseline" class="market-baseline"></p>
+            <div id="market-chart-frame" class="market-chart-frame"><svg id="market-chart" role="img" aria-label="Historical market prices, with event markers. Use the date slider and return table for exact values."></svg></div>
+            <div class="market-scrubber"><label for="market-date">Inspect a session <strong id="market-selected-date"></strong></label><input id="market-date" type="range" min="0" max="18" value="0" step="1"></div>
+            <div class="market-table-frame"><table class="market-table"><caption>Recorded returns at the selected session</caption><thead><tr><th scope="col">Asset</th><th scope="col">One session</th><th scope="col">Since baseline</th><th scope="col">Minus SPY</th></tr></thead><tbody id="market-readout"></tbody></table></div>
+          </div>
+          <aside class="market-reasoning" aria-label="Interpret the selected market exposure"><p class="market-panel-label">Explore the exposure</p><h3 id="market-group-title"></h3><p id="market-group-description"></p><h4>Hypothesis to test</h4><p id="market-hypothesis"></p><h4>Evidence that would help</h4><p id="market-check"></p><div class="causality-note"><strong>A price chart does not establish causation.</strong><p>Timing and return differences are observations. This small window has no causal identification, factor model or statistical significance test. SPY helps compare the wider market; it does not remove every competing explanation.</p></div><h4>Other events in the window</h4><p>The Fed decision and <a href="https://www.microsoft.com/en-us/Investor/earnings/FY-2025-Q2/press-release-webcast" target="_blank" rel="noopener noreferrer">Microsoft’s 29 January earnings</a> complicate attribution. BIS and company sources in the mechanism map include later publications. They are retrospective context, not an event-date information set.</p><a class="market-map-link" href="#investigation">Challenge a mechanism in the map ↓</a></aside>
+        </div>
+        <details class="market-method"><summary>Data, calculations and source files</summary><p id="market-provenance"></p><p>Indexed price = 100 × adjusted close / the last recorded close before the chosen event. Since-baseline return = indexed price − 100. Minus SPY = asset return − SPY return, in percentage points. One-session return compares consecutive recorded sessions. Adjusted closes reflect the provider’s corporate-action adjustments; they are not raw historical execution prices.</p><p>Lines connect daily observations for readability; there is no observation for a weekend or market holiday. <a href="https://www.nasdaqtrader.com/TraderNews.aspx?id=ETA2025-4" target="_blank" rel="noopener noreferrer">US markets were closed on 20 January</a>. The release and 27 January sell-off are separate dates.</p><p>Historical feed requests: <span id="market-price-sources"></span></p><a href="./data/deepseek-2025.csv" download="deepseek-2025.csv">Download prices as CSV</a> · <a href="./data/deepseek-2025.json" download="deepseek-2025.json">Data and provenance</a></details>
+      </div>
     </section>
     <section class="workspace wrap" id="investigation" aria-label="Market investigation">
       <aside class="case-index"><div class="section-heading"><h2>Open a case</h2><span id="case-count"></span></div><div id="cases" class="cases" aria-label="Market cases"></div><div class="index-note"><span class="mini-orbit" aria-hidden="true">◎</span><p>Markets share channels.<br>A headline is only the start.</p></div></aside>

@@ -8,6 +8,41 @@ The initial cases cover monetary-policy transmission and a stablecoin losing its
 venue outages and ETP execution, arrived through [ticket #3](https://github.com/dmgrok/enterprise-agentic-sdlc/issues/3)
 and [worker PR #4](https://github.com/dmgrok/enterprise-agentic-sdlc/pull/4), exercising the real delivery loop.
 
+## Analyze the recorded market window
+
+The open-model case now includes real historical adjusted daily closes for NVIDIA (NVDA), Broadcom (AVGO),
+Microsoft (MSFT), Alphabet (GOOGL) and the SPDR S&P 500 ETF (SPY), recorded from Yahoo Finance. The window is
+13 January–7 February 2025. It is a fixed snapshot, not a live feed, and does not give other illustrative cases
+invented prices. Source URLs, retrieval time, raw-response digests, CSV and JSON downloads accompany the chart.
+
+Choose the R1 release (20 January), the observed sell-off (27 January), or the Fed decision (29 January).
+Each event uses the last actual session before it as the baseline. US markets were closed on 20 January;
+the release's first observation is 21 January, not a fabricated holiday close. The release is not relabelled
+as the sell-off date. Daily straight-line segments are visual interpolation, not recorded intraday trades.
+
+Indexed values are `100 × adjusted close / baseline adjusted close`. Return differences versus SPY are
+`asset baseline return − SPY baseline return`, in **percentage points**, not a risk-adjusted abnormal return
+or a causal estimate. The exact return table follows the date scrubber and pointer inspection. SPY stays
+visible as the comparator. The plot, selected date, event baseline and all visible lines change together.
+
+**Market structure** opens exposure analysis. Frontier-lab, chip and cloud controls select the appropriate
+listed comparators and highlight a related map connection. Frontier labs and AI infrastructure nodes are
+keyboard/click targets too. No direct price series for OpenAI or Anthropic is fabricated. Microsoft and
+Alphabet remain labelled diversified comparators, and Broadcom's software exposure is explicit. There is
+no standalone data-centre landlord in this snapshot.
+
+The interface separates observations, hypotheses and evidence to seek. It flags the 29 January Fed decision
+and Microsoft's after-close earnings as competing events. Later mechanism sources are retrospective context;
+there is no claim to reconstruct the event-date information set, identify causality, estimate statistical
+significance, or isolate the AI segment of a diversified company. Challenging a map edge never changes
+historical prices or simulates a counterfactual market return.
+
+An operator can refresh the same bounded window using `python3 scripts/refresh_market_snapshot.py`. The refresh
+requires network access and refuses missing or misaligned data. CI builds and tests the committed snapshot
+offline; it does not contact a market-data provider or silently substitute synthetic observations. The build
+validates series, dates, values, origin URLs and event baselines before publishing. A chart-load failure has
+its own retry control and leaves the mechanism map available.
+
 ## The delivery contract
 
 1. An issue records the user question and acceptance criteria. Its title appears in the site's release notebook.

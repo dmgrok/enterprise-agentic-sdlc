@@ -1,8 +1,14 @@
 import { validateCase, reachable } from './model.mjs';
+import { createMarketAnalysis } from './market-analysis.mjs';
 
 const $ = selector => document.querySelector(selector);
 const NS = 'http://www.w3.org/2000/svg';
 let cases = [], active, selected, challenged = new Set();
+const groupEdges = {all:'credible-alternative',frontier:'price-competition',chips:'infra-efficiency-pressure',cloud:'adoption-channel'};
+const edgeGroup = id => ['price-competition','profit-repricing','lab-cost-offset'].includes(id) ? 'frontier' : id === 'adoption-channel' ? 'cloud' : ['compute-balance','verify-efficiency','infra-efficiency-pressure'].includes(id) ? 'chips' : 'all';
+const market = createMarketAnalysis({onFocus:group=>{if(active?.id==='open-model-release'){selected=groupEdges[group];render();}}});
+$('#open-market-analysis').addEventListener('click',event=>{event.preventDefault();if(active?.id!=='open-model-release')activate('open-model-release');market.open('all');});
+for(const anchor of document.querySelectorAll('a[href="#investigation"]'))anchor.addEventListener('click',event=>{event.preventDefault();$('#investigation').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});});
 function element(tag, className, content) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -39,7 +45,11 @@ function activate(id, edgeId, removed = []) {
   selected = active.edges.some(edge => edge.id === edgeId) ? edgeId : active.edges[0].id;
   challenged = new Set(removed.filter(id => active.edges.some(edge => edge.id === id)));
   for (const button of $('#cases').children) button.setAttribute('aria-pressed', button.dataset.case === active.id);
-  $('#case-category').textContent = active.category;
+  $('#case-category').replaceChildren();
+  if(active.id==='open-model-release'){
+    const explore=element('button','category-link',active.category+' · Explore exposures ↗');explore.type='button';explore.addEventListener('click',()=>market.open('all'));$('#case-category').append(explore);
+  }else $('#case-category').textContent=active.category;
+  market.setCase(active.id);
   $('#case-title').textContent = active.title;
   $('#case-subtitle').textContent = active.subtitle;
   $('#case-summary').textContent = active.summary;
@@ -66,7 +76,7 @@ function render() {
     const cy = (y1 + y2) / 2;
     group.append(svg('circle', { cx: middle, cy, r: 11, class: 'edge-number-circle' }));
     group.append(svg('text', { x: middle, y: cy + 4, 'text-anchor': 'middle', class: 'edge-number-text' }, index + 1));
-    const choose = () => { selected = edge.id; render(); };
+    const choose = () => { selected = edge.id; render(); if(active.id==='open-model-release')market.focusGroup(edgeGroup(edge.id)); };
     group.addEventListener('click', choose);
     group.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); choose(); $('#connection-picker').focus(); } });
     network.append(group);
@@ -75,6 +85,11 @@ function render() {
     const { x, y } = position(node);
     const group = svg('g', { class: `node ${node.kind}${connected.has(node.id) ? '' : ' unreachable'}` });
     group.append(svg('title', {}, node.label + ': ' + node.detail));
+    const exposure = node.id==='profit-outlook' ? 'frontier' : node.id==='compute-demand' ? 'chips' : node.id==='wider-adoption' ? 'cloud' : null;
+    if(active.id==='open-model-release' && exposure){
+      group.classList.add('interactive-node');group.setAttribute('role','button');group.setAttribute('tabindex','0');group.dataset.node=node.id;group.setAttribute('aria-label','Explore '+node.label+' in the market analysis');
+      const explore=()=>market.open(exposure);group.addEventListener('click',explore);group.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();explore();}});
+    }
     group.append(svg('rect', { x, y, width: 190, height: 90, rx: 10, class: 'node-box' }));
     const lines = wrapLabel(node.label);
     lines.forEach((line, index) => group.append(svg('text', { x: x + 15, y: y + 28 + index * 20, class: 'node-label' }, line)));
@@ -117,7 +132,7 @@ function renderEvidence() {
   const picker = element('select', 'connection-picker'); picker.id = 'connection-picker';
   active.edges.forEach((item, index) => { const option = element('option', '', `${index + 1}. ${item.label}`); option.value = item.id; picker.append(option); });
   picker.value = selected;
-  picker.addEventListener('change', () => { selected = picker.value; render(); $('#connection-picker').focus(); });
+  picker.addEventListener('change', () => { selected = picker.value; render(); if(active.id==='open-model-release')market.focusGroup(edgeGroup(selected)); $('#connection-picker').focus(); });
   panel.append(pickerLabel, picker);
 }
 function renderDelivery(data) {
@@ -163,3 +178,5 @@ async function load() {
 $('#reset-links').addEventListener('click', () => { challenged.clear(); render(); });
 $('#reload').addEventListener('click', () => location.reload());
 load();
+
+window.addEventListener('hashchange',()=>{const hash=new URLSearchParams(location.hash.slice(1));if(cases.length&&hash.has('case'))activate(hash.get('case'),hash.get('connection'),(hash.get('without')||'').split(',').filter(Boolean));});

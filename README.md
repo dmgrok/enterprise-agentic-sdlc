@@ -10,7 +10,9 @@ that can deny the next model call, withhold an output, pause a run, or request c
 
 [Open the GitHub Pages demo](https://dmgrok.github.io/enterprise-agentic-sdlc/): investigate how a rate signal,
 stablecoin depeg or market flow might travel between assets. Select a connection, inspect its primary sources,
-then challenge the link. Episodes are illustrative; the app does not provide live prices or price forecasts.
+then challenge the link. The open-model case also has an interactive historical price window: compare listed
+chip/cloud companies with SPY, scrub dates and explore clickable market exposures. Prices are observed;
+mechanisms are hypotheses. The app does not provide live prices, price forecasts or causal estimates.
 
 The site is a working delivery testbed. Open tickets refresh its delivery notebook. A maintainer-approved case
 ticket, researched and prepared from the human's text request, can produce a one-file draft PR; required checks gate merging, and Pages publishes the accepted change.

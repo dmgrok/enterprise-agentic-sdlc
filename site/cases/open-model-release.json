@@ -1,0 +1,138 @@
+{
+  "schema_version": "1",
+  "id": "open-model-release",
+  "title": "When an open model lands",
+  "subtitle": "Cheaper per task. More tasks? Follow both possibilities.",
+  "category": "Market structure",
+  "episode": "illustrative",
+  "summary": "A release from DeepSeek, GLM or Qwen can prompt two competing stories: pressure on model pricing, and wider use of AI. Neither establishes a stock-market winner. Check the exact model, licence, useful-task cost and adoption. This generic scenario does not claim a new release happened today or that every open model is cheaper.",
+  "nodes": [
+    {
+      "id": "model-release",
+      "label": "Open model release",
+      "detail": "Check the exact release",
+      "kind": "event",
+      "column": 0,
+      "row": 1
+    },
+    {
+      "id": "useful-task-cost",
+      "label": "Useful-task cost",
+      "detail": "Serving, retries and quality",
+      "kind": "mechanism",
+      "column": 1,
+      "row": 1
+    },
+    {
+      "id": "margin-pressure",
+      "label": "Pricing pressure",
+      "detail": "Customer substitution matters",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 0
+    },
+    {
+      "id": "wider-adoption",
+      "label": "Wider AI adoption",
+      "detail": "New tasks become viable",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 2
+    },
+    {
+      "id": "profit-outlook",
+      "label": "AI profit outlook",
+      "detail": "Model and application firms",
+      "kind": "asset",
+      "column": 3,
+      "row": 0
+    },
+    {
+      "id": "compute-demand",
+      "label": "Compute outlook",
+      "detail": "Chip makers and cloud hosts",
+      "kind": "asset",
+      "column": 3,
+      "row": 2
+    }
+  ],
+  "edges": [
+    {
+      "id": "credible-alternative",
+      "from": "model-release",
+      "to": "useful-task-cost",
+      "label": "Test the cheaper-alternative claim",
+      "explanation": "A usable open model may offer a cheaper alternative. The BIS supply-chain paper discusses cost and competition, not a guarantee for any release.",
+      "caveat": "Compare equivalent task quality, licence terms, hardware, serving and retries. A benchmark or reported training bill is not an operating-cost measurement.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-ai-chain"
+      ]
+    },
+    {
+      "id": "price-competition",
+      "from": "useful-task-cost",
+      "to": "margin-pressure",
+      "label": "Could customers switch?",
+      "explanation": "A credible substitute could pressure model prices. This is a competition hypothesis; switching costs and service differentiation matter.",
+      "caveat": "Check actual customer migration and pricing. Application firms may benefit from lower input costs even if some model providers face pressure.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-ai-chain"
+      ]
+    },
+    {
+      "id": "profit-repricing",
+      "from": "margin-pressure",
+      "to": "profit-outlook",
+      "label": "Revisit expected profits",
+      "explanation": "Holding discount rates constant, changing expected future profits changes present value. Different businesses can be affected differently.",
+      "caveat": "Lower unit prices do not establish lower total profits: volumes, costs and product mix matter. A stock move alone does not prove this explanation.",
+      "strength": "Documented mechanism",
+      "sources": [
+        "fed-valuations"
+      ]
+    },
+    {
+      "id": "adoption-channel",
+      "from": "useful-task-cost",
+      "to": "wider-adoption",
+      "label": "Could more tasks become viable?",
+      "explanation": "Lower useful-task cost could unlock new applications. Treat adoption growth as a hypothesis to verify, not an automatic consequence of an announcement.",
+      "caveat": "Look for sustained usage, customer retention and task success. Integration effort, reliability and data constraints can delay adoption.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-ai-chain"
+      ]
+    },
+    {
+      "id": "compute-balance",
+      "from": "wider-adoption",
+      "to": "compute-demand",
+      "label": "Efficiency versus total usage",
+      "explanation": "Total inference compute equals compute per task times task volume. More usage could offset efficiency gains. The Bank of Italy speech describes the uncertainty around hardware and energy expectations after DeepSeek.",
+      "caveat": "This balance is an investigation framework, not a measured rebound effect. Check utilization, capacity orders and training versus inference; cloud hosts can also serve open models.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-deepseek-expectations"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bis-ai-chain",
+      "title": "BIS Papers 154: the AI supply chain, competition and cost structure",
+      "url": "https://www.bis.org/publications/paper-154-ai-supply-chain.pdf"
+    },
+    {
+      "id": "bis-deepseek-expectations",
+      "title": "Bank of Italy speech: DeepSeek and uncertainty in AI expectations",
+      "url": "https://www.bis.org/speeches/20250225-data-science-central-banking"
+    },
+    {
+      "id": "fed-valuations",
+      "title": "Federal Reserve: profit growth, discount rates and stock returns",
+      "url": "https://www.federalreserve.gov/econres/notes/feds-notes/the-coming-long-run-slowdown-in-corporate-profit-growth-and-stock-returns-20220906.html"
+    }
+  ]
+}

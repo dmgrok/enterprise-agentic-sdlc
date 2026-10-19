@@ -2,10 +2,10 @@
   "schema_version": "1",
   "id": "open-model-release",
   "title": "When an open model lands",
-  "subtitle": "Cheaper per task. More tasks? Follow both possibilities.",
+  "subtitle": "Frontier labs and AI infrastructure: who captures cheaper AI?",
   "category": "Market structure",
   "episode": "illustrative",
-  "summary": "A release from DeepSeek, GLM or Qwen can prompt two competing stories: pressure on model pricing, and wider use of AI. Neither establishes a stock-market winner. Check the exact model, licence, useful-task cost and adoption. This generic scenario does not claim a new release happened today or that every open model is cheaper.",
+  "summary": "An open-model release can pressure frontier labs through substitution, while lower serving costs and more paid usage could offset it. Chip suppliers, cloud hosts and data-centre operators face a different balance: compute per task versus total demand. Check the exact model, licence, useful-task cost and adoption. These are conditional business mechanisms, not stock-price forecasts or a claim that a new release happened today.",
   "nodes": [
     {
       "id": "model-release",
@@ -40,17 +40,25 @@
       "row": 2
     },
     {
+      "id": "serving-efficiency",
+      "label": "Efficiency gains",
+      "detail": "Verify equivalent task quality",
+      "kind": "mechanism",
+      "column": 2,
+      "row": 1
+    },
+    {
       "id": "profit-outlook",
-      "label": "AI profit outlook",
-      "detail": "Model and application firms",
+      "label": "Frontier labs",
+      "detail": "Pricing, serving cost and moat",
       "kind": "asset",
       "column": 3,
       "row": 0
     },
     {
       "id": "compute-demand",
-      "label": "Compute outlook",
-      "detail": "Chip makers and cloud hosts",
+      "label": "AI infrastructure",
+      "detail": "Chips, cloud and data centres",
       "kind": "asset",
       "column": 3,
       "row": 2
@@ -62,7 +70,7 @@
       "from": "model-release",
       "to": "useful-task-cost",
       "label": "Test the cheaper-alternative claim",
-      "explanation": "A usable open model may offer a cheaper alternative. The BIS supply-chain paper discusses cost and competition, not a guarantee for any release.",
+      "explanation": "An open model may be a credible alternative. Test capability-equivalent cost rather than assuming an open licence makes a task cheaper.",
       "caveat": "Compare equivalent task quality, licence terms, hardware, serving and retries. A benchmark or reported training bill is not an operating-cost measurement.",
       "strength": "Context dependent",
       "sources": [
@@ -74,8 +82,8 @@
       "from": "useful-task-cost",
       "to": "margin-pressure",
       "label": "Could customers switch?",
-      "explanation": "A credible substitute could pressure model prices. This is a competition hypothesis; switching costs and service differentiation matter.",
-      "caveat": "Check actual customer migration and pricing. Application firms may benefit from lower input costs even if some model providers face pressure.",
+      "explanation": "If customers can switch without losing useful capability, frontier labs may face API price and differentiation pressure.",
+      "caveat": "Check migration, retention and realized prices. Reliability, integrations and distribution may limit substitution; a release benchmark does not establish it.",
       "strength": "Context dependent",
       "sources": [
         "bis-ai-chain"
@@ -85,9 +93,9 @@
       "id": "profit-repricing",
       "from": "margin-pressure",
       "to": "profit-outlook",
-      "label": "Revisit expected profits",
-      "explanation": "Holding discount rates constant, changing expected future profits changes present value. Different businesses can be affected differently.",
-      "caveat": "Lower unit prices do not establish lower total profits: volumes, costs and product mix matter. A stock move alone does not prove this explanation.",
+      "label": "Frontier labs: pricing and margin pressure",
+      "explanation": "Price pressure could weaken expected lab profits. The valuation mechanism is conditional on costs and volumes: lower expected cash flows reduce present value when discount rates are held constant.",
+      "caveat": "Monitor paid volume, serving margin and useful-capability differentiation. Lower prices need not mean lower profits, and a lab business impact is not a stock-return forecast.",
       "strength": "Documented mechanism",
       "sources": [
         "fed-valuations"
@@ -98,7 +106,7 @@
       "from": "useful-task-cost",
       "to": "wider-adoption",
       "label": "Could more tasks become viable?",
-      "explanation": "Lower useful-task cost could unlock new applications. Treat adoption growth as a hypothesis to verify, not an automatic consequence of an announcement.",
+      "explanation": "Lower useful-task cost could make more applications viable. Check sustained adoption rather than counting launch attention.",
       "caveat": "Look for sustained usage, customer retention and task success. Integration effort, reliability and data constraints can delay adoption.",
       "strength": "Context dependent",
       "sources": [
@@ -109,12 +117,51 @@
       "id": "compute-balance",
       "from": "wider-adoption",
       "to": "compute-demand",
-      "label": "Efficiency versus total usage",
-      "explanation": "Total inference compute equals compute per task times task volume. More usage could offset efficiency gains. The Bank of Italy speech describes the uncertainty around hardware and energy expectations after DeepSeek.",
-      "caveat": "This balance is an investigation framework, not a measured rebound effect. Check utilization, capacity orders and training versus inference; cloud hosts can also serve open models.",
+      "label": "Infrastructure: can usage offset efficiency?",
+      "explanation": "Total inference compute equals compute per task times task volume. More tasks could offset efficiency and support chips or hosting. Cloud operators can serve open models too.",
+      "caveat": "Inspect utilization, capacity orders, cloud pricing and power constraints. Chip suppliers, cloud hosts and data-centre owners have different costs and commitments. NVIDIA disclosures give supplier context, not proof of a rebound effect.",
       "strength": "Context dependent",
       "sources": [
-        "bis-deepseek-expectations"
+        "bis-deepseek-expectations",
+        "nvidia-infrastructure"
+      ]
+    },
+    {
+      "id": "verify-efficiency",
+      "from": "useful-task-cost",
+      "to": "serving-efficiency",
+      "label": "Verify actual serving-efficiency gains",
+      "explanation": "Check whether equivalent successful tasks consume fewer resources. This separates technical efficiency from a supplier simply charging less.",
+      "caveat": "Use comparable tasks, quality, retries and hardware. Reported training cost, a free model download or a lower API price does not establish serving efficiency.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-ai-chain"
+      ]
+    },
+    {
+      "id": "lab-cost-offset",
+      "from": "serving-efficiency",
+      "to": "profit-outlook",
+      "label": "Frontier labs: could costs and scale help?",
+      "explanation": "A competing hypothesis is that usable efficiency improvements lower a lab's own serving cost, while additional paid usage offsets lower unit prices. This is an inference to test, not an observed outcome for a particular lab.",
+      "caveat": "Measure serving cost per successful task, paid volume and margin together. Access to weights does not guarantee transferable techniques or a cheaper competitive frontier model.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-ai-chain",
+        "fed-valuations"
+      ]
+    },
+    {
+      "id": "infra-efficiency-pressure",
+      "from": "serving-efficiency",
+      "to": "compute-demand",
+      "label": "Infrastructure: less compute per task?",
+      "explanation": "If equivalent tasks actually require less compute and task volume stays fixed, aggregate compute demand falls. This arithmetic is the downside scenario to compare with adoption growth.",
+      "caveat": "A cheaper API is not evidence of hardware efficiency. Separate training from inference, and compute consumption from revenue: contracts, utilization and pricing can move differently.",
+      "strength": "Context dependent",
+      "sources": [
+        "bis-deepseek-expectations",
+        "nvidia-infrastructure"
       ]
     }
   ],
@@ -133,6 +180,11 @@
       "id": "fed-valuations",
       "title": "Federal Reserve: profit growth, discount rates and stock returns",
       "url": "https://www.federalreserve.gov/econres/notes/feds-notes/the-coming-long-run-slowdown-in-corporate-profit-growth-and-stock-returns-20220906.html"
+    },
+    {
+      "id": "nvidia-infrastructure",
+      "title": "NVIDIA July 2026 Form 10-Q: open models, infrastructure and capacity risks",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
     }
   ]
 }
